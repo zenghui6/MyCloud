@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zenghui.wangpan.mapper.FileFolderMapper">
+  <resultMap id="BaseResultMap" type="com.zenghui.wangpan.entity.FileFolder">
+    <id column="file_folder_file_folder_id" jdbcType="INTEGER" property="fileFolderId" />
+    <result column="file_folder_file_folder_name" jdbcType="VARCHAR" property="fileFolderName" />
+    <result column="file_folder_time" jdbcType="TIMESTAMP" property="time" />
+    <result column="file_folder_parent_folder_id" jdbcType="INTEGER" property="parentFolderId" />
+    <result column="file_folder_file_store_id" jdbcType="INTEGER" property="fileStoreId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    file_folder.file_folder_id as file_folder_file_folder_id, file_folder.file_folder_name as file_folder_file_folder_name, 
+    file_folder.`time` as `file_folder_time`, file_folder.parent_folder_id as file_folder_parent_folder_id, 
+    file_folder.file_store_id as file_folder_file_store_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from file_folder file_folder
+    where file_folder.file_folder_id = #{fileFolderId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from file_folder
+    where file_folder_id = #{fileFolderId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="file_folder_id" keyProperty="fileFolderId" parameterType="com.zenghui.wangpan.entity.FileFolder" useGeneratedKeys="true">
+    insert into file_folder (file_folder_name, `time`, parent_folder_id, 
+      file_store_id)
+    values (#{fileFolderName,jdbcType=VARCHAR}, #{time,jdbcType=TIMESTAMP}, #{parentFolderId,jdbcType=INTEGER}, 
+      #{fileStoreId,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" keyColumn="file_folder_id" keyProperty="fileFolderId" parameterType="com.zenghui.wangpan.entity.FileFolder" useGeneratedKeys="true">
+    insert into file_folder
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="fileFolderName != null">
+        file_folder_name,
+      </if>
+      <if test="time != null">
+        `time`,
+      </if>
+      <if test="parentFolderId != null">
+        parent_folder_id,
+      </if>
+      <if test="fileStoreId != null">
+        file_store_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="fileFolderName != null">
+        #{fileFolderName,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null">
+        #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="parentFolderId != null">
+        #{parentFolderId,jdbcType=INTEGER},
+      </if>
+      <if test="fileStoreId != null">
+        #{fileStoreId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zenghui.wangpan.entity.FileFolder">
+    update file_folder
+    <set>
+      <if test="fileFolderName != null">
+        file_folder_name = #{fileFolderName,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null">
+        `time` = #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="parentFolderId != null">
+        parent_folder_id = #{parentFolderId,jdbcType=INTEGER},
+      </if>
+      <if test="fileStoreId != null">
+        file_store_id = #{fileStoreId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where file_folder_id = #{fileFolderId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zenghui.wangpan.entity.FileFolder">
+    update file_folder
+    set file_folder_name = #{fileFolderName,jdbcType=VARCHAR},
+      `time` = #{time,jdbcType=TIMESTAMP},
+      parent_folder_id = #{parentFolderId,jdbcType=INTEGER},
+      file_store_id = #{fileStoreId,jdbcType=INTEGER}
+    where file_folder_id = #{fileFolderId,jdbcType=INTEGER}
+  </update>
+</mapper>

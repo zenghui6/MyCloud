@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zenghui.wangpan.mapper.FileStoreMapper">
+  <resultMap id="BaseResultMap" type="com.zenghui.wangpan.entity.FileStore">
+    <id column="file_store_file_store_id" jdbcType="INTEGER" property="fileStoreId" />
+    <result column="file_store_max_size" jdbcType="INTEGER" property="maxSize" />
+    <result column="file_store_current_size" jdbcType="INTEGER" property="currentSize" />
+    <result column="file_store_user_id" jdbcType="INTEGER" property="userId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    file_store.file_store_id as file_store_file_store_id, file_store.max_size as file_store_max_size, 
+    file_store.current_size as file_store_current_size, file_store.user_id as file_store_user_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from file_store file_store
+    where file_store.file_store_id = #{fileStoreId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from file_store
+    where file_store_id = #{fileStoreId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="file_store_id" keyProperty="fileStoreId" parameterType="com.zenghui.wangpan.entity.FileStore" useGeneratedKeys="true">
+    insert into file_store (max_size, current_size, user_id
+      )
+    values (#{maxSize,jdbcType=INTEGER}, #{currentSize,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" keyColumn="file_store_id" keyProperty="fileStoreId" parameterType="com.zenghui.wangpan.entity.FileStore" useGeneratedKeys="true">
+    insert into file_store
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="maxSize != null">
+        max_size,
+      </if>
+      <if test="currentSize != null">
+        current_size,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="maxSize != null">
+        #{maxSize,jdbcType=INTEGER},
+      </if>
+      <if test="currentSize != null">
+        #{currentSize,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zenghui.wangpan.entity.FileStore">
+    update file_store
+    <set>
+      <if test="maxSize != null">
+        max_size = #{maxSize,jdbcType=INTEGER},
+      </if>
+      <if test="currentSize != null">
+        current_size = #{currentSize,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where file_store_id = #{fileStoreId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zenghui.wangpan.entity.FileStore">
+    update file_store
+    set max_size = #{maxSize,jdbcType=INTEGER},
+      current_size = #{currentSize,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER}
+    where file_store_id = #{fileStoreId,jdbcType=INTEGER}
+  </update>
+</mapper>

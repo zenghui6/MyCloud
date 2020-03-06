@@ -1,0 +1,56 @@
+#配置项目名和session的过期时间
+server:
+    servlet:
+      context-path: /cloud
+      session:
+        timeout: 60m
+
+    tomcat:
+      uri-encoding: utf-8
+    port: 8080
+
+
+#配置Mybatis
+mybatis:
+  config-location: classpath:mybatis-config.xml
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.zenghui.wangpan.entity
+
+#spring
+spring:
+  #静态资源访问路径
+  mvc:
+    static-path-pattern: /**
+    #配置数据源
+  datasource:
+    username: root
+    password: a1210128434
+    url: jdbc:mysql://127.0.0.1:3306/cloud?characterEncoding=UTF-8&serverTimezone=Hongkong&useAffectedRows=true
+#    driver-class-name: com.mysql.jdbc.Driver
+
+
+
+  thymeleaf:
+    #关闭缓存可以及时刷新,调试时方便
+    cache: false
+    #不使用严格模式
+    mode: LEGACYHTML5
+    encoding: UTF-8
+
+    #热部署
+  devtools:
+    restart:
+      enabled: true
+
+  #上传文件限制
+  http:
+    encoding:
+      force: true
+      charset: UTF-8
+  #配置文件上传相关
+  servlet:
+    multipart:
+      max-file-size: 1024MB
+      max-request-size: 1024MB
+
+#Redis配置

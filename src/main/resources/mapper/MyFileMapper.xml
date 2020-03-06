@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zenghui.wangpan.mapper.MyFileMapper">
+  <resultMap id="BaseResultMap" type="com.zenghui.wangpan.entity.MyFile">
+    <id column="my_file_my_file_id" jdbcType="INTEGER" property="myFileId" />
+    <result column="my_file_my_file_name" jdbcType="VARCHAR" property="myFileName" />
+    <result column="my_file_download_time" jdbcType="INTEGER" property="downloadTime" />
+    <result column="my_file_upload_time" jdbcType="TIMESTAMP" property="uploadTime" />
+    <result column="my_file_size" jdbcType="INTEGER" property="size" />
+    <result column="my_file_type" jdbcType="INTEGER" property="type" />
+    <result column="my_file_postfix" jdbcType="VARCHAR" property="postfix" />
+    <result column="my_file_file_folder_id" jdbcType="INTEGER" property="fileFolderId" />
+    <result column="my_file_my_file_path" jdbcType="VARCHAR" property="myFilePath" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    my_file.my_file_id as my_file_my_file_id, my_file.my_file_name as my_file_my_file_name, 
+    my_file.download_time as my_file_download_time, my_file.upload_time as my_file_upload_time, 
+    my_file.`size` as `my_file_size`, my_file.`type` as `my_file_type`, my_file.`postfix` as `my_file_postfix`, 
+    my_file.file_folder_id as my_file_file_folder_id, my_file.my_file_path as my_file_my_file_path
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from my_file my_file
+    where my_file.my_file_id = #{myFileId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from my_file
+    where my_file_id = #{myFileId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="my_file_id" keyProperty="myFileId" parameterType="com.zenghui.wangpan.entity.MyFile" useGeneratedKeys="true">
+    insert into my_file (my_file_name, download_time, upload_time, 
+      `size`, `type`, `postfix`, 
+      file_folder_id, my_file_path)
+    values (#{myFileName,jdbcType=VARCHAR}, #{downloadTime,jdbcType=INTEGER}, #{uploadTime,jdbcType=TIMESTAMP}, 
+      #{size,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{postfix,jdbcType=VARCHAR}, 
+      #{fileFolderId,jdbcType=INTEGER}, #{myFilePath,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" keyColumn="my_file_id" keyProperty="myFileId" parameterType="com.zenghui.wangpan.entity.MyFile" useGeneratedKeys="true">
+    insert into my_file
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="myFileName != null">
+        my_file_name,
+      </if>
+      <if test="downloadTime != null">
+        download_time,
+      </if>
+      <if test="uploadTime != null">
+        upload_time,
+      </if>
+      <if test="size != null">
+        `size`,
+      </if>
+      <if test="type != null">
+        `type`,
+      </if>
+      <if test="postfix != null">
+        `postfix`,
+      </if>
+      <if test="fileFolderId != null">
+        file_folder_id,
+      </if>
+      <if test="myFilePath != null">
+        my_file_path,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="myFileName != null">
+        #{myFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="downloadTime != null">
+        #{downloadTime,jdbcType=INTEGER},
+      </if>
+      <if test="uploadTime != null">
+        #{uploadTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="size != null">
+        #{size,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="postfix != null">
+        #{postfix,jdbcType=VARCHAR},
+      </if>
+      <if test="fileFolderId != null">
+        #{fileFolderId,jdbcType=INTEGER},
+      </if>
+      <if test="myFilePath != null">
+        #{myFilePath,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zenghui.wangpan.entity.MyFile">
+    update my_file
+    <set>
+      <if test="myFileName != null">
+        my_file_name = #{myFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="downloadTime != null">
+        download_time = #{downloadTime,jdbcType=INTEGER},
+      </if>
+      <if test="uploadTime != null">
+        upload_time = #{uploadTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="size != null">
+        `size` = #{size,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        `type` = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="postfix != null">
+        `postfix` = #{postfix,jdbcType=VARCHAR},
+      </if>
+      <if test="fileFolderId != null">
+        file_folder_id = #{fileFolderId,jdbcType=INTEGER},
+      </if>
+      <if test="myFilePath != null">
+        my_file_path = #{myFilePath,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where my_file_id = #{myFileId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zenghui.wangpan.entity.MyFile">
+    update my_file
+    set my_file_name = #{myFileName,jdbcType=VARCHAR},
+      download_time = #{downloadTime,jdbcType=INTEGER},
+      upload_time = #{uploadTime,jdbcType=TIMESTAMP},
+      `size` = #{size,jdbcType=INTEGER},
+      `type` = #{type,jdbcType=INTEGER},
+      `postfix` = #{postfix,jdbcType=VARCHAR},
+      file_folder_id = #{fileFolderId,jdbcType=INTEGER},
+      my_file_path = #{myFilePath,jdbcType=VARCHAR}
+    where my_file_id = #{myFileId,jdbcType=INTEGER}
+  </update>
+</mapper>
