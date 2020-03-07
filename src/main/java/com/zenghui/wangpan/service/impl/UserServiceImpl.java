@@ -30,6 +30,20 @@ public class UserServiceImpl extends BaseService implements UserService {
     }
 
     /**
+     * 根据用户名判断用户是否存在
+     *
+     * @param user
+     * @return
+     */
+    @Override
+    public boolean findByUserName(User user) {
+        if (userMapper.selectByUserName(user) != null){
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * 删除User
      *
      * @param userId

@@ -13,6 +13,7 @@ mvnw.cmd
 log
 mvnw
 target
+public
 ### Java template
 # Compiled class file
 *.class

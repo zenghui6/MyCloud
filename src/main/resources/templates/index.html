@@ -16,7 +16,7 @@
 		<div class="title">网盘登录</div>
 		<div class="input">
 			<label for="name">用户名</label>
-			<input type="text" v-model="name" id="name" >
+			<input type="text" v-model="userName" id="name" >
 			<span class="spin"></span>
 		</div>
 		<div class="input">
@@ -40,21 +40,20 @@
 		<div class="title">网盘注册</div>
 		<div class="input">
 			<label for="regname">用户名</label>
-			<input type="text" name="regname" id="regname">
+			<input type="text" name="regname" id="regname" v-model="userName">
 			<span class="spin"></span>
 		</div>
 		<div class="input">
 			<label for="regpass">密码</label>
-			<input type="password" name="regpass" id="regpass">
+			<input type="password" name="regpass" id="regpass" v-model="password">
 			<span class="spin"></span>
 		</div>
 		<div class="input">
-			<label for="reregpass">确认密码</label>
-			<input type="password" name="reregpass" id="reregpass">
-			<span class="spin"></span>
+		<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+		      <input class="form-control" placeholder="请选择头像" type="file" name="headPortrait" @change="getImage($event)"/>
 		</div>
 		<div class="button">
-			<button>
+			<button @click="register">
 				<span>注册</span>
 			</button>
 		</div>
@@ -69,7 +68,7 @@
 	var loginVm = new Vue({
 		el: '#loginApp',
 		data: {
-			name: '',
+			userName: '',
 			password:''
 		},
 		//在`methods`对象中定义方法
@@ -83,6 +82,36 @@
 					console.log(response.status);
 					console.log(response.msg);
 				});
+			}
+		}
+	})
+
+	var registerVm = new Vue({
+		el: '#registerApp',
+		data: {
+			userName: '',
+			password: '',
+			image: ''
+		},
+		methods: {
+			register: function () {
+				//传图片要使用formData格式
+				var formData = new FormData();
+				formData.append("userName",this.userName);
+				formData.append("password",this.password);
+				formData.append("image",this.image);
+				axios({
+					method: 'post',
+					url: '/cloud/register',
+					data: formData
+				}).then(function (response) {
+					console.log(response);
+				})
+			},
+
+			//图片不能使用双向绑定方式,要使用原生dom获取input中的图片
+			getImage: function (event) {
+				this.image = event.target.files[0];
 			}
 		}
 	})

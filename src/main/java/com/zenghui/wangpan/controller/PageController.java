@@ -5,21 +5,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  * @ClassName PageController
- * @Description: 用作页面转跳
+ * @Description: TODO
  * @Author zeng
- * @Date 2020/3/6
+ * @Date 2020/3/7
  **/
 @Controller
 public class PageController {
 
     @GetMapping("/login")
-    public String login(){
+    public String toLogin(){
         return "index";
     }
-
-    @GetMapping("/")
-    public String index(){
-        return "u-admin/index";
-    }
-
 }

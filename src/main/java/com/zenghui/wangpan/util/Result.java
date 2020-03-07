@@ -1,39 +1,41 @@
 package com.zenghui.wangpan.util;
 
+import org.slf4j.LoggerFactory;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 用了返回给前端信息的类
  * @author zeng
  */
-public class Result {
-    public static int SUCCESS_CODE = 0;
-    public static int FAIL_CODE = 1;
+public class Result implements Serializable {
 
-    int code;
-    String message;
-    Object data;
+    @SuppressWarnings("unused")
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(Result.class);
 
-    private Result(int code, String message, Object data) {
-        this.code = code;
+    private static final long serialVersionUID = -1802122468331526708L;
+    private int status = -1;
+    private String message = "待处理";
+    /**
+     * 用来数据存放键值对
+     */
+    private Map<String, Object> data = new HashMap<String, Object>();
+
+    public Result(){}
+
+    public Result(int status, String message){
+        this.status = status;
         this.message = message;
-        this.data = data;
     }
 
-    public static Result success() {
-        return new Result(SUCCESS_CODE,null,null);
-    }
-    public static Result success(Object data) {
-        return new Result(SUCCESS_CODE,"",data);
-    }
-    public static Result fail(String message) {
-        return new Result(FAIL_CODE,message,null);
+    public int getStatus() {
+        return status;
     }
 
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public String getMessage() {
@@ -44,12 +46,28 @@ public class Result {
         this.message = message;
     }
 
-    public Object getData() {
+    public Map<String, Object> getData() {
         return data;
     }
 
-    public void setData(Object data) {
+    public void setData(Map<String, Object> data) {
         this.data = data;
     }
 
+    public void putData(String key, Object value) {
+        data.put(key, value);
+    }
+
+    public void removeData(String key) {
+        data.remove(key);
+    }
+
+    @Override
+    public String toString() {
+        return "Result{" +
+                "status=" + status +
+                ", message='" + message + '\'' +
+                ", data=" + data +
+                '}';
+    }
 }

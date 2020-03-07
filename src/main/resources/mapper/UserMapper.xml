@@ -20,7 +20,14 @@
   <select id="queryAll" resultType="com.zenghui.wangpan.entity.User">
     select * from user
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+<!--  根据用户名查询用户-->
+    <select id="selectByUserName" resultType="com.zenghui.wangpan.entity.User">
+      select
+      <include refid="Base_Column_List"/>
+      from user
+      where user_name = #{userName,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from user
     where user_id = #{userId,jdbcType=INTEGER}
   </delete>

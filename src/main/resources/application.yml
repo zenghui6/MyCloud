@@ -9,12 +9,19 @@ server:
       uri-encoding: utf-8
     port: 8080
 
+# 日志的存放位置与级别
+logging:
+  file:
+    name: log/cloud.log
+  level:
+    root: info
 
 #配置Mybatis
 mybatis:
   config-location: classpath:mybatis-config.xml
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: com.zenghui.wangpan.entity
+
 
 #spring
 spring:
@@ -75,5 +82,11 @@ spring:
     multipart:
       max-file-size: 1024MB
       max-request-size: 1024MB
+
+#无效数据清理,对于字段值为null时不返回
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+    default-property-inclusion: non_null
 
 #Redis配置

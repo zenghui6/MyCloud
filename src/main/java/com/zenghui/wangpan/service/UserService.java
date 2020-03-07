@@ -20,6 +20,13 @@ public interface UserService {
     boolean add(User user);
 
     /**
+     * 根据用户名判断用户是否存在
+     * @param user
+     * @return
+     */
+    boolean findByUserName(User user);
+
+    /**
      * 删除User
      * @param userId
      * @return
