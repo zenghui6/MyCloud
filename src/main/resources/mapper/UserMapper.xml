@@ -6,9 +6,10 @@
     <result column="user_name" jdbcType="VARCHAR" property="userName" />
     <result column="register_time" jdbcType="TIMESTAMP" property="registerTime" />
     <result column="image_path" jdbcType="VARCHAR" property="imagePath" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
   </resultMap>
   <sql id="Base_Column_List">
-    user_id, user_name, register_time, image_path
+    user_id, user_name, register_time, image_path, `password`
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -17,20 +18,17 @@
     where user_id = #{userId,jdbcType=INTEGER}
   </select>
   <select id="queryAll" resultType="com.zenghui.wangpan.entity.User">
-    select
-    <include refid="Base_Column_List"/>
-    from user
+    select * from user
   </select>
-
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from user
     where user_id = #{userId,jdbcType=INTEGER}
   </delete>
   <insert id="insert" keyColumn="user_id" keyProperty="userId" parameterType="com.zenghui.wangpan.entity.User" useGeneratedKeys="true">
-    insert into user (user_name, register_time, image_path
-      )
-    values (#{userName,jdbcType=VARCHAR}, #{registerTime,jdbcType=TIMESTAMP}, #{imagePath,jdbcType=VARCHAR}
-      )
+    insert into user (user_name, register_time, image_path, 
+      `password`)
+    values (#{userName,jdbcType=VARCHAR}, #{registerTime,jdbcType=TIMESTAMP}, #{imagePath,jdbcType=VARCHAR}, 
+      #{password,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" keyColumn="user_id" keyProperty="userId" parameterType="com.zenghui.wangpan.entity.User" useGeneratedKeys="true">
     insert into user
@@ -44,6 +42,9 @@
       <if test="imagePath != null">
         image_path,
       </if>
+      <if test="password != null">
+        `password`,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="userName != null">
@@ -54,6 +55,9 @@
       </if>
       <if test="imagePath != null">
         #{imagePath,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -69,6 +73,9 @@
       <if test="imagePath != null">
         image_path = #{imagePath,jdbcType=VARCHAR},
       </if>
+      <if test="password != null">
+        `password` = #{password,jdbcType=VARCHAR},
+      </if>
     </set>
     where user_id = #{userId,jdbcType=INTEGER}
   </update>
@@ -76,7 +83,8 @@
     update user
     set user_name = #{userName,jdbcType=VARCHAR},
       register_time = #{registerTime,jdbcType=TIMESTAMP},
-      image_path = #{imagePath,jdbcType=VARCHAR}
+      image_path = #{imagePath,jdbcType=VARCHAR},
+      `password` = #{password,jdbcType=VARCHAR}
     where user_id = #{userId,jdbcType=INTEGER}
   </update>
 </mapper>

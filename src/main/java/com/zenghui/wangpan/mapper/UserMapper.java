@@ -1,11 +1,12 @@
 package com.zenghui.wangpan.mapper;
 
 import com.zenghui.wangpan.entity.User;
-import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
-@Mapper
+/**
+ * @author zeng
+ */
 public interface UserMapper {
     int deleteByPrimaryKey(Integer userId);
 

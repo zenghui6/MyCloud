@@ -3,7 +3,7 @@ package com.zenghui.wangpan.entity;
 import java.io.Serializable;
 import java.util.Date;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
@@ -11,11 +11,6 @@ import lombok.Data;
  * @author 
  */
 @Data
-/**
- * @Data 注解的类编译后会自动给我们加上:
- *         所有属性的get和set方法toString hashCode方法 equals方法
- */
-@AllArgsConstructor
 public class User implements Serializable {
     /**
      * 用户ID
@@ -36,6 +31,13 @@ public class User implements Serializable {
      * 头像地址
      */
     private String imagePath;
+
+    /**
+     * 密码
+     * 在输出的Json数据中隐藏密码，只能输入不输出
+     */
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String password;
 
     private static final long serialVersionUID = 1L;
 }
