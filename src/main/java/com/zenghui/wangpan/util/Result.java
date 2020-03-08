@@ -12,60 +12,111 @@ import java.util.Map;
  */
 public class Result implements Serializable {
 
-    @SuppressWarnings("unused")
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(Result.class);
+    private int code;
 
-    private static final long serialVersionUID = -1802122468331526708L;
-    private int status = -1;
-    private String message = "待处理";
-    /**
-     * 用来数据存放键值对
-     */
-    private Map<String, Object> data = new HashMap<String, Object>();
+    private String message;
 
-    public Result(){}
+    private Object data;
 
-    public Result(int status, String message){
-        this.status = status;
-        this.message = message;
+    public Result(){
+
     }
 
-    public int getStatus() {
-        return status;
+    public static Result succuess(){
+        Result Result = new Result();
+        Result.setResultCode(ResultCode.SUCCESS);
+
+        return Result;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    public static Result succuess(Object data){
+        Result Result = new Result();
+        Result.setResultCode(ResultCode.SUCCESS);
+        Result.setData(data);
+
+        return Result;
+    }
+
+    public static Result fail() {
+        Result Result = new Result();
+        Result.setResultCode(ResultCode.FAIL);
+
+        return Result;
+    }
+
+
+    public static Result fail(ResultCode resultCode) {
+        Result Result = new Result();
+        Result.setResultCode(resultCode);
+
+        return Result;
+    }
+
+    public static Result fail(String message) {
+        Result Result = new Result();
+        Result.setCode(ResultCode.FAIL.code());
+        Result.setMessage(message);
+
+        return Result;
+    }
+
+    public static Result fail(Integer code, String message) {
+        Result Result = new Result();
+        Result.setCode(code);
+        Result.setMessage(message);
+
+        return Result;
+    }
+
+    public static Result fail(ResultCode resultCode, Object data) {
+        Result Result = new Result();
+        Result.setResultCode(resultCode);
+        Result.setData(data);
+
+        return Result;
+    }
+
+    public static Result verifiFail(String message){
+        Result Result = new Result();
+        Result.setCode(ResultCode.VERIFICATION_FAIL.code());
+        Result.setMessage(message);
+
+        return Result;
+    }
+
+    private void setResultCode(ResultCode resultCode){
+        this.code = resultCode.code();
+        this.message = resultCode.message();
+    }
+
+    public void setData(Object data){
+        this.data = data;
+    }
+
+    public Object getData(){
+        return data;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
     }
 
     public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
+    public void setMessage(String message){
         this.message = message;
-    }
-
-    public Map<String, Object> getData() {
-        return data;
-    }
-
-    public void setData(Map<String, Object> data) {
-        this.data = data;
-    }
-
-    public void putData(String key, Object value) {
-        data.put(key, value);
-    }
-
-    public void removeData(String key) {
-        data.remove(key);
     }
 
     @Override
     public String toString() {
         return "Result{" +
-                "status=" + status +
+                "code=" + code +
                 ", message='" + message + '\'' +
                 ", data=" + data +
                 '}';

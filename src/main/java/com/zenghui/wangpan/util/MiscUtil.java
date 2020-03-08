@@ -1,6 +1,5 @@
 package com.zenghui.wangpan.util;
 
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
@@ -23,12 +22,13 @@ public class MiscUtil {
         Map<String,String> fieldErrors = new HashMap<>();
         
         for (FieldError error : bindingResult.getFieldErrors()) {
-            fieldErrors.put(error.getField(), error.getCode() + "|" + error.getDefaultMessage());
+            fieldErrors.put(error.getField(), error.getDefaultMessage());
         }
 
-        Result result = new Result(422,"输入错误");
-        result.putData("fieldErrors",fieldErrors);
-
+        Result result =  Result.verifiFail("输入错误");
+        Map<String,Object> map = new HashMap<>();
+        map.put("fieldErrors",fieldErrors);
+        result.setData(map);
         return result;
     }
 }

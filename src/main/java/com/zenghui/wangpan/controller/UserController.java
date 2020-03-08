@@ -49,20 +49,19 @@ public class UserController extends BaseController{
      * @return
      */
     @PostMapping("/register")
-    public ResponseEntity<Result> register(@Valid User user, BindingResult bindingResult,
+    public Object register(@Valid User user, BindingResult bindingResult,
                                            @RequestParam("image") MultipartFile image, HttpServletRequest request) throws IOException {
         if (bindingResult.hasErrors()){
             //返回输入错误的result,使用工具类处理
             Result errResult = MiscUtil.getValidateError(bindingResult);
 
             //返回ResponseEntity
-            return new ResponseEntity<Result>(errResult, HttpStatus.UNPROCESSABLE_ENTITY);
+            return errResult;
         }
         //判断用户是否已存在
         if (userService.findByUserName(user)){
             //用户名存在
-            Result ret = new Result(500,"该用户名已存在");
-            return new ResponseEntity<Result>(ret, HttpStatus.BAD_REQUEST);
+            return Result.fail("该用户名已存在");
         }
         //输入数据校验成功,开始注册
         user.setRegisterTime(new Date());
@@ -71,8 +70,7 @@ public class UserController extends BaseController{
         userService.add(user);
         logger.info("创建用户成功"+user);
 
-        Result result = new Result(200,"ok");
-        return ResponseEntity.ok(result);
+        return Result.succuess();
     }
 
     /**

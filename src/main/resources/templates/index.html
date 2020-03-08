@@ -105,7 +105,15 @@
 					url: '/cloud/register',
 					data: formData
 				}).then(function (response) {
-					console.log(response);
+					console.log(response.data);
+					if(response.data.code === 0){
+						location.href = "/cloud/login"
+					}
+					else if (response.data.code === 1){
+						alert(response.data.message);
+					}
+					else
+						alert(response.data.data.fieldErrors.userName + '\n' + response.data.data.fieldErrors.password);
 				})
 			},
 
