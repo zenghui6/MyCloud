@@ -24,7 +24,7 @@ public interface UserService {
      * @param user
      * @return
      */
-    boolean findByUserName(User user);
+    User findByUserName(User user);
 
     /**
      * 删除User
@@ -53,4 +53,13 @@ public interface UserService {
      * @return
      */
     boolean update(User user);
+
+    /**
+     * 登录,根据用户名和密码查找对应用户
+     * @param userName
+     * @param password
+     * @return
+     */
+    User getUserByUserNameAndPassword(String userName, String password);
+
 }

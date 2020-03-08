@@ -36,11 +36,8 @@ public class UserServiceImpl extends BaseService implements UserService {
      * @return
      */
     @Override
-    public boolean findByUserName(User user) {
-        if (userMapper.selectByUserName(user) != null){
-            return true;
-        }
-        return false;
+    public User findByUserName(User user) {
+        return userMapper.selectByUserName(user);
     }
 
     /**
@@ -92,5 +89,17 @@ public class UserServiceImpl extends BaseService implements UserService {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 登录,根据用户名和密码查找对应用户
+     *
+     * @param userName
+     * @param password
+     * @return
+     */
+    @Override
+    public User getUserByUserNameAndPassword(String userName, String password) {
+        return userMapper.getByNameAndPassword(userName,password);
     }
 }

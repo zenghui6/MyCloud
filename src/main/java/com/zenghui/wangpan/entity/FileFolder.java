@@ -6,6 +6,9 @@ import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
 /**
  * file_folder
  * @author 
@@ -21,6 +24,8 @@ public class FileFolder implements Serializable {
     /**
      * 文件夹名称
      */
+    @NotBlank(message = "文件夹名称不为空")
+    @Size(max = 30 , message = "文件夹名称长度不超过30")
     private String fileFolderName;
 
     /**

@@ -1,17 +1,17 @@
 package com.zenghui.wangpan.controller;
 
+import com.zenghui.wangpan.entity.FileStore;
 import com.zenghui.wangpan.entity.User;
 import com.zenghui.wangpan.util.LogUtils;
 import com.zenghui.wangpan.util.MiscUtil;
 import com.zenghui.wangpan.util.Result;
 import org.slf4j.Logger;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
@@ -30,13 +30,33 @@ public class UserController extends BaseController{
     /**
      * 用户登录,后面会改为shiro验证
      * 前端传入的formData会自动注入到bean中
-     * @param user
+     * @param userParam
      * @return
      */
     @PostMapping("/login")
-    public Object login(@RequestBody User user){
+    public Object login(@Valid @RequestBody User userParam , BindingResult bindingResult, HttpSession session){
 
-        return null;
+        if (bindingResult.hasErrors()){
+            Result errResult = MiscUtil.getValidateError(bindingResult);
+            return errResult;
+        }
+
+        //输入验证成功后
+        User user = userService.getUserByUserNameAndPassword(userParam.getUserName(),userParam.getPassword());
+
+        if (user == null){
+            return Result.fail("用户名或密码错误");
+        }
+
+//        //在user实体中加入其仓库id
+
+        user.setFileStoreId(fileStoreService.getByUserId(user.getUserId()).getFileStoreId());
+
+        session.setAttribute("loginUser",user);
+
+        logger.info("用户登录成功" + user);
+
+        return Result.succuess();
     }
 
     /**
@@ -59,19 +79,35 @@ public class UserController extends BaseController{
             return errResult;
         }
         //判断用户是否已存在
-        if (userService.findByUserName(user)){
+        if (userService.findByUserName(user) != null){
             //用户名存在
             return Result.fail("该用户名已存在");
         }
         //输入数据校验成功,开始注册
         user.setRegisterTime(new Date());
+        //根据用户创建的头像
         user.setImagePath(saveOrUpdateImageFile(user,image,request));
 
-        userService.add(user);
-        logger.info("创建用户成功"+user);
+        if(userService.add(user)){
+            logger.info("创建用户成功"+user);
+            //为用户创建一个仓库
+
+            FileStore store = new FileStore();
+            store.setUserId(user.getUserId());
+            store.setMaxSize(2097152);
+            store.setCurrentSize(0);
+
+            if (fileStoreService.add(store)){
+                logger.info("为用户:"+user.getUserName()+"创建仓库成功");
+            }
+            System.out.println(store.getMaxSize());
+        }else {
+            logger.info("用户注册失败");
+        }
 
         return Result.succuess();
     }
+
 
     /**
      * 对上传图片处理的工具方法

@@ -5,6 +5,9 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.sql.In;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -22,6 +25,12 @@ public class User implements Serializable {
      * 用户ID
      */
     private Integer userId;
+
+    /**
+     * 用户的仓库id,非数据库文件
+     */
+    @Transient
+    private Integer fileStoreId;
 
     /**
      * 用户名

@@ -33,7 +33,7 @@
 	<div class="main-wrapper">
 		<div class="navbar-bg"></div>
 		<div th:replace="commons/bar::#top"></div>
-		<div th:replace="commons/bar::#sidebar(currUri='all',statistics = ${statistics})"></div>
+		<div th:replace="commons/bar::#sidebar"></div>
 
 		<div class="main-content">
 			<section class="section">
@@ -179,7 +179,7 @@
 	});
 </script>
 <script src="plug-ins/context-menu/js/jquery.contextMenu.min.js"></script>
-<script src="plug-ins/xcConfirm/js/xcConfirm.js"></script>
+<script src="static/plug-ins/xcConfirm/js/xcConfirm.js"></script>
 <script>
 	$(".files").contextMenu({
 		width: 100, // width

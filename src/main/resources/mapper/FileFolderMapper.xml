@@ -19,6 +19,19 @@
     from file_folder file_folder
     where file_folder.file_folder_id = #{fileFolderId,jdbcType=INTEGER}
   </select>
+    <select id="getRootFoldersByFileStoreId" resultType="com.zenghui.wangpan.entity.FileFolder">
+      select
+      <include refid="Base_Column_List"/>
+      from file_store left join file_folder
+      on file_store.file_store_id = file_folder.file_store_id
+      where file_folder.parent_folder_id=0
+    </select>
+  <select id="getFileFolderByParentFolderId" resultType="com.zenghui.wangpan.entity.FileFolder">
+    select
+    <include refid="Base_Column_List"/>
+    from file_folder
+    where parent_folder_id = #{parentFolderId,jdbcType=INTEGER}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from file_folder
     where file_folder_id = #{fileFolderId,jdbcType=INTEGER}

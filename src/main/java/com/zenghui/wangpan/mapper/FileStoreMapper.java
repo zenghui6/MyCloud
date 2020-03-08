@@ -14,4 +14,11 @@ public interface FileStoreMapper {
     int updateByPrimaryKeySelective(FileStore record);
 
     int updateByPrimaryKey(FileStore record);
+
+    /**
+     * 通过用户id查找其仓库
+     * @param userId
+     * @return
+     */
+    FileStore selectByUserId(Integer userId);
 }

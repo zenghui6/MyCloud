@@ -27,6 +27,12 @@
       from user
       where user_name = #{userName,jdbcType=VARCHAR}
     </select>
+    <select id="getByNameAndPassword" resultType="com.zenghui.wangpan.entity.User">
+      select
+      <include refid="Base_Column_List"/>
+      from user
+      where user_name = #{userName,jdbcType=VARCHAR} and password = #{password,jdbcType=VARCHAR}
+    </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from user
     where user_id = #{userId,jdbcType=INTEGER}

@@ -5,17 +5,17 @@
 	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" name="viewport">
 	<title>莫提网盘-上传文件</title>
 
-	<link rel="stylesheet" href="u-admin/dist/modules/bootstrap/css/bootstrap.min.css">
-	<link rel="stylesheet" href="u-admin/dist/modules/ionicons/css/ionicons.min.css">
-	<link rel="stylesheet" href="u-admin/dist/modules/fontawesome/web-fonts-with-css/css/fontawesome-all.min.css">
+	<link rel="stylesheet" href="static/u-admin/dist/modules/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="static/u-admin/dist/modules/ionicons/css/ionicons.min.css">
+	<link rel="stylesheet" href="static/u-admin/dist/modules/fontawesome/web-fonts-with-css/css/fontawesome-all.min.css">
 
-	<link rel="stylesheet" href="u-admin/dist/modules/summernote/summernote-lite.css">
-	<link rel="stylesheet" href="u-admin/dist/modules/flag-icon-css/css/flag-icon.min.css">
-	<link rel="stylesheet" href="u-admin/dist/css/demo.css">
-	<link rel="stylesheet" href="u-admin/dist/css/style.css">
-	<link rel="stylesheet" href="css/upload-file.css">
-	<link rel="stylesheet" href="plug-ins/xcConfirm/css/xcConfirm.css">
-	<link rel="stylesheet" href="plug-ins/context-menu/css/contextMenu.css">
+	<link rel="stylesheet" href="static/u-admin/dist/modules/summernote/summernote-lite.css">
+	<link rel="stylesheet" href="static/u-admin/dist/modules/flag-icon-css/css/flag-icon.min.css">
+	<link rel="stylesheet" href="static/u-admin/dist/css/demo.css">
+	<link rel="stylesheet" href="static/u-admin/dist/css/style.css">
+	<link rel="stylesheet" href="static/css/upload-file.css">
+	<link rel="stylesheet" href="static/plug-ins/xcConfirm/css/xcConfirm.css">
+	<link rel="stylesheet" href="static/plug-ins/context-menu/css/contextMenu.css">
 	<style>
 		.files-items{
 			margin-top: -20px;
@@ -34,12 +34,12 @@
 	<div class="main-wrapper">
 		<div class="navbar-bg"></div>
 		<div th:replace="commons/bar::#top"></div>
-		<div th:replace="commons/bar::#sidebar(currUri='upload',statistics = ${statistics})"></div>
+		<div th:replace="commons/bar::#sidebar"></div>
 
 		<div class="main-content">
 			<section class="section">
 				<h1 class="section-header">
-					<div><i class="ion ion-folder"></i> 上传文件 <span style="color: red;font-size: 14px" th:if="${error != null}" th:text="${error}"></span></div>
+					<div><i class="ion ion-folder"></i> 上传文件 <span style="color: red;font-size: 14px"></span></div>
 				</h1>
 				<div class="row">
 					<div class="col-12 col-sm-12 col-lg-8">
@@ -48,52 +48,53 @@
 								<h4>当前路径</h4>
 								<nav aria-label="breadcrumb" class="empty-space">
 									<ol class="breadcrumb">
-										<li class="breadcrumb-item"><a
-												th:href="@{/upload(fId=${nowFolder.fileFolderId})}"
-												title="刷新"><i
-												class="icon ion-refresh"></i></a>
+										<li class="breadcrumb-item">
+											<a title="刷新"><i class="icon ion-refresh"></i></a>
 										</li>
-										<li th:class="${nowFolder.fileFolderId == 0?'breadcrumb-item active':'breadcrumb-item'}">
-                                                            <span th:if="${nowFolder.fileFolderId == 0}"
-																  th:text="根目录"></span><a style="font-weight: bold"
-																						  th:if="${nowFolder.fileFolderId != 0}"
-																						  href="upload">根目录</a></li>
-										<li th:each="l:${location}" class="breadcrumb-item"><a
-												style="font-weight: bold"
-												th:href="@{/upload(fId=${l.fileFolderId},fName=${l.fileFolderName})}"
-												th:text="${l.fileFolderName}"></a></li>
-										<li th:if="${nowFolder.fileFolderId != 0}"
-											class="breadcrumb-item active" aria-current="page"
-											th:text="${nowFolder.fileFolderName}"></li>
-										<li th:if="${nowFolder.fileFolderId != 0}"
-											class="breadcrumb-item"><a
-												th:href="@{/upload(fId=${nowFolder.parentFolderId})}"
-												title="返回上一层"><i
-												class="icon ion-arrow-return-left"></i></a>
+										<li class="breadcrumb-item">
+											<a style="font-weight: bold" href="upload">根目录</a>
+										</li>
+										<li class="breadcrumb-item">
+											<a style="font-weight: bold">图片</a>
+										</li>
+										<li class="breadcrumb-item active" aria-current="page">小图片</li>
+										<li class="breadcrumb-item"><a title="返回上一层"><i class="icon ion-arrow-return-left"></i></a>
 										</li>
 									</ol>
 								</nav>
 							</div>
 							<div class="card-body table-responsive">
-								<div id="uploader" style="margin-top: -10px;"></div>
+
+									<div class="col-12">
+										<div class="float-right">
+											<a href="javaScript:addFolderElement()" class="btn btn-sm btn-outline-success"><i class="icon ion-plus"></i> 创建文件夹</a>
+										</div>
+									</div>
+
+
+<!--								easyUpload.jq.js插件-->
+								<div id="uploader" style="margin-top: -10px;">
+
+								</div>
+
 							</div>
 						</div>
 					</div>
 					<div class="col-12 col-sm-12 col-lg-4">
 						<div class="card">
 							<div class="card-header">
-								<h4>预览</h4>
+								<h4>子目录</h4>
 							</div>
 							<div class="card-body">
 								<div class="row" style="margin-top: -10px;">
 									<div class="col-12 col-sm-12 col-lg-12 table-responsive">
 										<table class="table tab-bordered text-nowrap" id="files-table">
-											<tr th:each="folder:${folders}" class="files-items folders">
-												<td><span style="display: none" th:text="${folder.fileFolderId}"></span><i style="font-size: 24px;color: orange" class="icon ion-android-folder"></i></td>
+											<tr class="files-items folders">
+												<td><span style="display: none"></span><i style="font-size: 24px;color: orange" class="icon ion-android-folder"></i></td>
 												<td>
-													<a th:href="@{/upload(fId=${folder.fileFolderId},fName=${folder.fileFolderName})}" style="font-weight: 700;color: black" th:text="${folder.fileFolderName}"></a>
+													<a href="upload/1" style="font-weight: 700;color: black">图片文件夹</a>
 												</td>
-												<td style="font-weight: 300" th:text="${#dates.format(folder.time,'yyyy-MM-dd HH:mm')}"></td>
+												<td style="font-weight: 300">2020-03-06 11:06</td>
 											</tr>
 										</table>
 									</div>
@@ -103,14 +104,14 @@
 					</div>
 				</div>
 			</section>
-			<span id="nowF" style="display: none" th:text="${nowFolder.fileFolderId}"></span>
-			<span id="preF" style="display: none" th:text="${nowFolder.parentFolderId}"></span>
+			<span id="nowF" style="display: none">10</span>
+			<span id="preF" style="display: none">11</span>
 			<span id="tarFolder" style="display: none"></span>
 		</div>
 		<div th:replace="commons/bar::#footer"></div>
 	</div>
 </div>
-<script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+<script src="static/js/jquery.min.js"></script>
 <script>
 	$(function () {
 		$('.folders').dblclick(function () {
@@ -132,8 +133,8 @@
 		});
 	});
 </script>
-<script src="plug-ins/context-menu/js/jquery.contextMenu.min.js"></script>
-<script src="plug-ins/xcConfirm/js/xcConfirm.js"></script>
+<script src="static/plug-ins/context-menu/js/jquery.contextMenu.min.js"></script>
+<script src="static/plug-ins/xcConfirm/js/xcConfirm.js"></script>
 <script>
 	$(".folders").contextMenu({
 		width: 100, // width
@@ -179,7 +180,7 @@
 	}
 
 </script>
-<script src="js/easyUploader.jq.js"></script>
+<script src="static/js/easyUploader.jq.js"></script>
 <script>
 	var uploader = easyUploader({
 		id: "uploader",
@@ -236,20 +237,20 @@
 		},
 	});
 </script>
-<script src="u-admin/dist/modules/jquery.min.js"></script>
-<script src="u-admin/dist/modules/popper.js"></script>
-<script src="u-admin/dist/modules/tooltip.js"></script>
-<script src="u-admin/dist/modules/bootstrap/js/bootstrap.min.js"></script>
-<script src="u-admin/dist/modules/nicescroll/jquery.nicescroll.min.js"></script>
-<script src="u-admin/dist/modules/scroll-up-bar/dist/scroll-up-bar.min.js"></script>
-<script src="u-admin/dist/js/sa-functions.js"></script>
+<script src="static/u-admin/dist/modules/jquery.min.js"></script>
+<script src="static/u-admin/dist/modules/popper.js"></script>
+<script src="static/u-admin/dist/modules/tooltip.js"></script>
+<script src="static/u-admin/dist/modules/bootstrap/js/bootstrap.min.js"></script>
+<script src="static/u-admin/dist/modules/nicescroll/jquery.nicescroll.min.js"></script>
+<script src="static/u-admin/dist/modules/scroll-up-bar/dist/scroll-up-bar.min.js"></script>
+<script src="static/u-admin/dist/js/sa-functions.js"></script>
 
-<script src="u-admin/dist/modules/chart.min.js"></script>
-<script src="u-admin/dist/modules/summernote/summernote-lite.js"></script>
+<script src="static/u-admin/dist/modules/chart.min.js"></script>
+<script src="static/u-admin/dist/modules/summernote/summernote-lite.js"></script>
 
-<script src="u-admin/dist/js/scripts.js"></script>
-<script src="u-admin/dist/js/custom.js"></script>
-<script src="u-admin/dist/js/demo.js"></script>
-<script src="u-admin/dist/modules/chart.min.js"></script>
+<script src="static/u-admin/dist/js/scripts.js"></script>
+<script src="static/u-admin/dist/js/custom.js"></script>
+<script src="static/u-admin/dist/js/demo.js"></script>
+<script src="static/u-admin/dist/modules/chart.min.js"></script>
 </body>
 </html>

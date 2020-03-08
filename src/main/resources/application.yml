@@ -10,11 +10,11 @@ server:
     port: 8080
 
 # 日志的存放位置与级别
-logging:
-  file:
-    name: log/cloud.log
-  level:
-    root: info
+#logging:
+#  file:
+#    name: log/cloud.log
+#  level:
+#    root: info
 
 #配置Mybatis
 mybatis:
@@ -27,7 +27,7 @@ mybatis:
 spring:
   #静态资源访问路径
   mvc:
-    static-path-pattern: /**
+    static-path-pattern: /static/**
     #配置数据源
   datasource:
     username: root

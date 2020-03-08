@@ -17,7 +17,15 @@
     from file_store file_store
     where file_store.file_store_id = #{fileStoreId,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+<!--  通过用户id查找其仓库 -->
+    <select id="selectByUserId" resultType="com.zenghui.wangpan.entity.FileStore">
+      select *
+      from user left join file_store
+      on user.user_id = file_store.user_id
+      where file_store.user_id = #{userId}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from file_store
     where file_store_id = #{fileStoreId,jdbcType=INTEGER}
   </delete>

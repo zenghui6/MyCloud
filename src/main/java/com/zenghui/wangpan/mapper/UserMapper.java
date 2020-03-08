@@ -23,4 +23,13 @@ public interface UserMapper {
     int updateByPrimaryKey(User record);
 
     List<User> queryAll();
+
+    /**
+     * 登录根据用户名和密码查找用户
+     * @param userName
+     * @param password
+     * @return
+     */
+    User getByNameAndPassword(String userName, String password);
+
 }
