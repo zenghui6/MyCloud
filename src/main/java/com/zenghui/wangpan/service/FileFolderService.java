@@ -11,6 +11,13 @@ import java.util.List;
  * @Date 2020/3/8
  **/
 public interface FileFolderService {
+
+    /**
+     * 查找一个
+     * @param id
+     * @return
+     */
+    FileFolder getById(Integer id);
     /**
      * 获取仓库根目录下的所有文件夹
      * @param fileStoreId
@@ -31,4 +38,5 @@ public interface FileFolderService {
      * @return
      */
     boolean addFileFolder(FileFolder fileFolder);
+
 }

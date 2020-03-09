@@ -15,6 +15,17 @@ import java.util.List;
 @Service
 public class FileFolderServiceImpl extends BaseService implements FileFolderService {
     /**
+     * 查找一个
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public FileFolder getById(Integer id) {
+        return fileFolderMapper.selectByPrimaryKey(id);
+    }
+
+    /**
      * 获取仓库根目录下的所有文件夹
      *
      * @param fileStoreId

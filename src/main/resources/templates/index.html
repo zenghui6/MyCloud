@@ -6,7 +6,7 @@
 
 <link rel="stylesheet" th:href="@{/static/css/font-awesome-4.7.0/css/font-awesome.min.css}">
 <link rel="stylesheet" href="static/css/style.css">
-<link rel="stylesheet" type="text/css" href="static/plug-ins/xcConfirm/css/xcConfirm.css"/>
+<link rel="stylesheet" type="text/css" href="static/plug-ins/BeAlert/BeAlert.css"/>
 
 </head>
 <body>
@@ -66,7 +66,7 @@
 <script src="static/js/vue@2.6.11.js"></script>
 <script src="static/js/axios.min.js"></script>
 <!--弹窗插件-->
-<script src="static/plug-ins/xcConfirm/js/xcConfirm.js"></script>
+<script src="static/plug-ins/BeAlert/BeAlert.js"></script>
 <script>
 	var loginVm = new Vue({
 		el: '#loginApp',
@@ -85,11 +85,15 @@
 					if(response.data.code === 0){
 						location.href = "/cloud/";
 					}else if (response.data.code === 40002){//前端数据验证
-						var txt = response.data.data.fieldErrors.userName + '\n' + response.data.data.fieldErrors.password
-						window.wxc.xcConfirm(txt, window.wxc.xcConfirm.typeEnum.info);
+						var txt = response.data.data.fieldErrors.userName + '\n' + response.data.data.fieldErrors.password;
+						alert("输入错误",txt,function () {
+
+						},{type: 'error',confirmButtonText: '确认'});
 					}else {
-						var txt = response.data.message;;
-						window.wxc.xcConfirm(txt, window.wxc.xcConfirm.typeEnum.info);
+						var txt = response.data.message;
+						alert(" ",txt,function () {
+
+						},{type: 'error',confirmButtonText: '确认'});
 					}
 
 				});
@@ -106,27 +110,44 @@
 		},
 		methods: {
 			register: function () {
+				/**
+				 * 前端校验,也有后端校验
+				 */
+				if (this.image === '' || this.image === null){
+					alert("输入错误","请添加头像",function () {
+
+					},{type: 'info',confirmButtonText: '确认'});
+
+					return;
+				}
+
+
 				//传图片要使用formData格式
 				var formData = new FormData();
 				formData.append("userName",this.userName);
 				formData.append("password",this.password);
 				formData.append("image",this.image);
+
 				axios({
 					method: 'post',
 					url: '/cloud/register',
 					data: formData
 				}).then(function (response) {
-					console.log(response.data);
 					if(response.data.code === 0){
 						location.href = "/cloud/user"
 					}
 					else if (response.data.code === 1){
-						var txt = response.data.message;;
-						window.wxc.xcConfirm(txt, window.wxc.xcConfirm.typeEnum.info);
+						var txt = response.data.message;
+						alert("注册失败",txt,function () {
+
+						},{type: 'error',confirmButtonText: '确认'});
 					}
-					else
-						var txt = response.data.data.fieldErrors.userName + '\n' + response.data.data.fieldErrors.password
-						window.wxc.xcConfirm(txt, window.wxc.xcConfirm.typeEnum.info);
+					else if(response.data.code === 40002) {
+						var txt = response.data.data.fieldErrors.userName + '\n' + response.data.data.fieldErrors.password;
+						alert("注册失败", txt, function () {
+
+						}, {type: 'error', confirmButtonText: '确认'});
+					}
 				})
 			},
 

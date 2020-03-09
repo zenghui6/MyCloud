@@ -26,6 +26,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         //从session中获取登录用户
         Object loginUser = request.getSession().getAttribute("loginUser");
+//        System.out.println("拦截器获取到session:" + request.getSession().getAttribute("loginUser"));
 
         if (loginUser == null){
             //未登录,返回登录页面,这个要加项目路径,我要不知道为什么

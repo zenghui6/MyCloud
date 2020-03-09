@@ -15,7 +15,11 @@ import javax.servlet.http.HttpSession;
 public class PageController {
 
     @GetMapping("/user")
-    public String toLogin(){
+    public String toLogin(HttpSession session){
+        if (session.getAttribute("loginUser") != null){
+            return "redirect:/";
+        }
+
         return "index";
     }
 
@@ -44,6 +48,6 @@ public class PageController {
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-        return "redirect: /";
+        return "redirect:/";
     }
 }
