@@ -1,23 +1,22 @@
-package com.zenghui.wangpan.mapper;
+package com.zenghui.wangpan.service;
 
 import com.zenghui.wangpan.entity.MyFile;
-import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
-@Mapper
-public interface MyFileMapper {
-    int deleteByPrimaryKey(Integer myFileId);
-
-    int insert(MyFile record);
-
-    int insertSelective(MyFile record);
-
-    MyFile selectByPrimaryKey(Integer myFileId);
-
-    int updateByPrimaryKeySelective(MyFile record);
-
-    int updateByPrimaryKey(MyFile record);
+/**
+ * @InterfaceName MyFileService
+ * @Description: TODO
+ * @Author zeng
+ * @Date 2020/3/10
+ **/
+public interface MyFileService {
+    /**
+     * 上传文件
+     * @param myFile
+     * @return
+     */
+    boolean add(MyFile myFile);
 
     /**
      * 查找文件夹下的所有文件

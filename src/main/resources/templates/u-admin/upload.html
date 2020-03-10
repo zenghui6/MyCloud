@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" name="viewport">
-	<title>莫提网盘-上传文件</title>
+	<title>网盘-上传文件</title>
 
 	<link rel="stylesheet" href="static/u-admin/dist/modules/bootstrap/css/bootstrap.min.css">
 	<link rel="stylesheet" href="static/u-admin/dist/modules/ionicons/css/ionicons.min.css">
@@ -25,10 +25,39 @@
 		.files-items:hover{
 			background: #F4FBFF;
 		}
-		.cant{
-			pointer-events:none;
-		}
 	</style>
+
+	<script>
+		//获取地址栏参数的函数
+		function getUrlParms(para){
+			var search=location.search; //页面URL的查询部分字符串
+			var arrPara=new Array(); //参数数组。数组单项为包含参数名和参数值的字符串，如“para=value”
+			var arrVal=new Array(); //参数值数组。用于存储查找到的参数值
+
+			if(search!=""){
+				var index=0;
+				search=search.substr(1); //去除开头的“?”
+				arrPara=search.split("&");
+
+				for(i in arrPara){
+					var paraPre=para+"="; //参数前缀。即参数名+“=”，如“para=”
+					if(arrPara[i].indexOf(paraPre)==0&& paraPre.length<arrPara[i].length){
+						arrVal[index]=decodeURI(arrPara[i].substr(paraPre.length)); //顺带URI解码避免出现乱码
+						index++;
+					}
+				}
+			}
+
+			if(arrVal.length==1){
+				return arrVal[0];
+			}else if(arrVal.length==0){
+				return null;
+			}else{
+				return arrVal;
+			}
+		}
+
+	</script>
 
 </head>
 
@@ -94,7 +123,7 @@
 								<div class="row" style="margin-top: -10px;">
 									<div class="col-12 col-sm-12 col-lg-12 table-responsive">
 										<table class="table tab-bordered text-nowrap" id="files-table">
-											<span class="display : hide" id="preTable"></span>
+											<tr class="display : hide" id="preTable"></tr>
 											<tr class="files-items folders" v-for="folder in folders">
 												<td><span style="display: none"></span><i style="font-size: 24px;color: orange" class="icon ion-android-folder"></i></td>
 												<td>
@@ -118,42 +147,79 @@
 	</div>
 </div>
 
+<script src="static/js/jquery.min.js"></script>
 <script src="static/js/vue@2.6.11.js"></script>
 <script src="static/js/axios.min.js"></script>
 <script>
 
-	let vm = new Vue({
-		el: '#main',
-		data: {
-			foid: '',
-			pid: '', //当前目录的父亲id
-			folders : '',
-			navigates: ''	//面包屑导航
-		},
-		mounted:function() {
-			this.getFolders(0);
-		},
-		methods: {
-			getFolders :function (foid) {
-				//并发的异步请求
-				axios.all([
-					axios.get("/cloud/folder?foid=" +foid),
-					axios.get("/cloud/folderParents?foid=" +foid)
-				]).then(axios.spread(function(folderResponse,parentsResponse){
-					vm.folders = folderResponse.data.data;
-					// vm.pid = folderResponse.data.data[0].parentFolderId;
+		let vm = new Vue({
+			el: '#main',
+			data: {
+				foid: '',
+				pid: '', //当前目录的父亲id
+				folders: '',
+				newFolder:'',
+				navigates: ''	//面包屑导航
+			},
+			mounted: function () {
+				this.getFolders(0);
+				window.getFolders = this.getFolders;
+			},
+			methods: {
+				getFolders: function (foid) {
+					console.log("当前文件夹id: " + foid);
+					this.foid = foid;
+					//并发的异步请求
+					axios.all([
+						axios.get("/cloud/folder?foid=" + foid),
+						axios.get("/cloud/folderParents?foid=" + foid)
+					]).then(axios.spread(function (folderResponse, parentsResponse) {
+						vm.folders = folderResponse.data.data;
+						// vm.pid = folderResponse.data.data[0].parentFolderId;
 
-					vm.navigates = parentsResponse.data.data;
-					console.log(parentsResponse.data.data);
-				}));
-				console.log("当前文件夹id: "+foid);
+						vm.navigates = parentsResponse.data.data;
+						console.log(parentsResponse.data.data);
+					}));
+				},
+
+			}
+		});
+
+		//新建文件夹
+		function addFolderElement() {
+			var now = $('#nowF').html();
+
+			//在表格第一行插入
+			$("#files-table tr:first").before("<tr class='files-items folders' id='newtr'> <td><span style='display: none'></span><i style='font-size: 24px;color: orange' class='icon ion-android-folder'></i></td>"+
+					"<td>" +
+					"<input id='newFolder' autocomplete='off' name='fileFolderName' type='text' onblur='checkAddFolder()'>" +
+					"</td>"+
+					"</tr>");
+
+			$('#newFolder').focus();
+		}
+		function checkAddFolder() {
+			var name = $.trim($("#newFolder").val());
+			var nameReg = /^[\u4E00-\u9FA5A-Za-z0-9]{1,20}$/;
+			if (!nameReg.test(name)) {
+
+				alert("创建文件夹失败","文件夹格式错误！【汉字、字母、数字】",function () {
+					$('#newtr').remove();
+					getFolders(vm.foid);
+				},{type: 'error',confirmButtonText: '好的'});
+
+			}else{
+				var newFolderName = $('#newFolder').val();
+				console.log(newFolderName);
+				var newFolder = {"fileFolderName" : newFolderName, "parentFolderId" :vm.foid};
+				axios.post('/cloud/addFolder',newFolder).then(function (response) {
+					$('#newtr').remove();
+					getFolders(vm.foid);
+				})
 			}
 		}
-	})
 
 </script>
-
-<script src="static/js/jquery.min.js"></script>
 <script>
 	$(function () {
 		$('.folders').dblclick(function () {
@@ -221,36 +287,6 @@
 		}
 	}
 
-	//新建文件夹
-	function addFolderElement() {
-		var now = $('#nowF').html();
-
-		//在表格第一行插入
-		$("#files-table tr:first").before("<tr class='files-items folders'> <td><span style='display: none'></span><i style='font-size: 24px;color: orange' class='icon ion-android-folder'></i></td>"+
-				"<td>" +
-				"<form id='addFolderForm' action='addFolder' method='post'>" +
-				"<input id='newFolder'  autocomplete='off' name='fileFolderName' type='text' onblur='checkAddFolder()'>" +
-				"<input type='hidden' name='parentFolderId' value='"+now+"'>" +
-				"</form>"+
-				"</td>"+
-				"</tr>");
-
-		$('#newFolder').focus();
-	}
-	function checkAddFolder() {
-		var name = $.trim($("#newFolder").val());
-		var nameReg = /^[\u4E00-\u9FA5A-Za-z0-9]{1,20}$/;
-		if (!nameReg.test(name)) {
-
-			alert("创建文件夹失败","文件夹格式错误！【汉字、字母、数字】",function () {
-				var location = window.location.href;
-				window.location.href = location;
-			},{type: 'error',confirmButtonText: '好的'});
-
-		}else{
-			$('#addFolderForm').submit();
-		}
-	}
 
 </script>
 <script src="static/js/easyUploader.jq.js"></script>

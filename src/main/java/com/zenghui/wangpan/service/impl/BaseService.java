@@ -2,6 +2,7 @@ package com.zenghui.wangpan.service.impl;
 
 import com.zenghui.wangpan.mapper.FileFolderMapper;
 import com.zenghui.wangpan.mapper.FileStoreMapper;
+import com.zenghui.wangpan.mapper.MyFileMapper;
 import com.zenghui.wangpan.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,5 +22,8 @@ public class BaseService {
 
     @Autowired
     protected FileFolderMapper fileFolderMapper;
+
+    @Autowired
+    protected MyFileMapper myFileMapper;
 
 }

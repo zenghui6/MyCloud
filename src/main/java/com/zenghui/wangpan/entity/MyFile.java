@@ -52,5 +52,10 @@ public class MyFile implements Serializable {
 
     private String myFilePath;
 
+    /**
+     * 文件所属仓库
+     */
+    private Integer fileStoreId;
+
     private static final long serialVersionUID = 1L;
 }
