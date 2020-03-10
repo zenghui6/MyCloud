@@ -2,6 +2,7 @@ package com.zenghui.wangpan.controller;
 
 import com.zenghui.wangpan.service.FileFolderService;
 import com.zenghui.wangpan.service.FileStoreService;
+import com.zenghui.wangpan.service.MyFileService;
 import com.zenghui.wangpan.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,6 +21,9 @@ public class BaseController {
 
     @Autowired
     protected FileFolderService fileFolderService;
+
+    @Autowired
+    protected MyFileService myFileService;
 
 
 }

@@ -88,6 +88,7 @@ public class FileStoreController extends BaseController {
         else{
             folderList = fileFolderService.getFileFolderByParentFolderId(foid);
         }
+        session.setAttribute("curFoid",foid);
 
         return Result.succuess(folderList);
     }

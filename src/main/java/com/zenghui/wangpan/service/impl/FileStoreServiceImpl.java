@@ -29,6 +29,20 @@ public class FileStoreServiceImpl  extends BaseService implements FileStoreServi
     }
 
     /**
+     * 更新仓库信息到数据库
+     *
+     * @param fileStore
+     * @return
+     */
+    @Override
+    public boolean update(FileStore fileStore) {
+        if (fileStoreMapper.updateByPrimaryKeySelective(fileStore) ==1){
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * 通过用户id查找对应的仓库
      *
      * @param userId

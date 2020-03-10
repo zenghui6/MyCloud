@@ -167,7 +167,6 @@
 			},
 			methods: {
 				getFolders: function (foid) {
-					console.log("当前文件夹id: " + foid);
 					this.foid = foid;
 					//并发的异步请求
 					axios.all([
@@ -180,6 +179,8 @@
 						vm.navigates = parentsResponse.data.data;
 						console.log(parentsResponse.data.data);
 					}));
+
+					console.log("当前文件夹id: " + this.foid);
 				},
 
 			}
@@ -187,8 +188,6 @@
 
 		//新建文件夹
 		function addFolderElement() {
-			var now = $('#nowF').html();
-
 			//在表格第一行插入
 			$("#files-table tr:first").before("<tr class='files-items folders' id='newtr'> <td><span style='display: none'></span><i style='font-size: 24px;color: orange' class='icon ion-android-folder'></i></td>"+
 					"<td>" +
@@ -289,15 +288,17 @@
 
 
 </script>
+
+<!--上传文件插件-->
 <script src="static/js/easyUploader.jq.js"></script>
 <script>
 	var uploader = easyUploader({
 		id: "uploader",
 		accept: '',
-		action: 'uploadFile',
+		action: '/cloud/uploadFile',
 		dataFormat: 'formData',
 		headers:{
-			id:$('#nowF').html()
+			id : 7// id: $('#nowF').html()
 		},
 		maxCount: 10,
 		maxSize: 1024,

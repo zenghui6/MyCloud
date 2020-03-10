@@ -17,6 +17,13 @@ public interface FileStoreService {
     boolean add(FileStore fileStore);
 
     /**
+     * 更新仓库信息到数据库
+     * @param fileStore
+     * @return
+     */
+    boolean update(FileStore fileStore);
+
+    /**
      * 通过用户id查找对应的仓库
      * @param userId
      * @return
