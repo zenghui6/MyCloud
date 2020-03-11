@@ -36,10 +36,10 @@ public class FileStoreServiceImpl  extends BaseService implements FileStoreServi
      */
     @Override
     public boolean update(FileStore fileStore) {
-        if (fileStoreMapper.updateByPrimaryKeySelective(fileStore) ==1){
-            return true;
+        if (fileStoreMapper.updateByPrimaryKeySelective(fileStore) == 0){
+            return false;
         }
-        return false;
+        return true;
     }
 
     /**

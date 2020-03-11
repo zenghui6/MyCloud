@@ -89,7 +89,9 @@ public class MyFileController extends BaseController {
 
 
         //上传文件,计算文件大小,计算库剩余容量,将长整形转为 int,宁愿浪费一点空间,不让他上传
-        Integer sizeInt = Math.toIntExact(files.getSize() / 1024);
+        Integer sizeInt = Math.max((int) files.getSize() / 1024, 1);
+        logger.info("文件大小: " +sizeInt);
+
         //是否仓库放不下该文件
         if (store.getCurrentSize() + sizeInt > store.getMaxSize()){
             logger.error("上传失败!仓库已满");
@@ -98,9 +100,6 @@ public class MyFileController extends BaseController {
 
         //处理文件信息
         //处理文件大小
-        String size = String.valueOf(files.getSize()/1024.0);
-        int indexDot = size.lastIndexOf(".");
-        size = size.substring(0,indexDot);
         int index = name.lastIndexOf(".");
         String tempName = name.substring(index);
         name = name.substring(0,index);
@@ -125,20 +124,23 @@ public class MyFileController extends BaseController {
                 newFile.setFileFolderId(foid);
                 newFile.setFileStoreId(store.getFileStoreId());
                 newFile.setUploadTime(new Date());
-                newFile.setSize(Integer.valueOf(size));
+                newFile.setSize(sizeInt);
                 newFile.setPostfix(postfix);
                 newFile.setMyFilePath(path);
                 newFile.setType(type);
 
                 if (myFileService.add(newFile)){
                     //上传成功了,给仓库使用容量改变
-                    store.setCurrentSize(store.getCurrentSize()+sizeInt);
+                    int curSize = store.getCurrentSize();
+                    logger.info("更新仓库用量: "+ curSize);
+                    store.setCurrentSize(curSize + sizeInt);
+                    logger.info("更新后仓库用量: " +store.getCurrentSize());
                     //将仓库信息更新到数据库
                     if (!fileStoreService.update(store)){
                         logger.info("更新仓库信息失败");
                         return Result.fail("更新仓库信息失败");
                     }
-                    return Result.succuess("上传文件成功");
+                    return Result.succuess(200,"上传文件成功");
                 }
                 else {
                     logger.error("文件夹上传失败: "+files.getOriginalFilename());

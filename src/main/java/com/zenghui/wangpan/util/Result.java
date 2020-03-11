@@ -84,6 +84,14 @@ public class Result implements Serializable {
         return Result;
     }
 
+    public static Object succuess(int code, String message) {
+        Result Result = new Result();
+        Result.setCode(code);
+        Result.setMessage(message);
+
+        return Result;
+    }
+
     private void setResultCode(ResultCode resultCode){
         this.code = resultCode.code();
         this.message = resultCode.message();

@@ -32,7 +32,7 @@ spring:
   datasource:
     username: root
     password: a1210128434
-    url: jdbc:mysql://127.0.0.1:3306/cloud?characterEncoding=UTF-8&serverTimezone=Hongkong&useAffectedRows=true
+    url: jdbc:mysql://127.0.0.1:3306/cloud?characterEncoding=UTF-8&serverTimezone=Hongkong&useAffectedRows=true  #mybatis返回的是受影响的函行数
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
 
