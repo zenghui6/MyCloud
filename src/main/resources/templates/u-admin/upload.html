@@ -84,8 +84,13 @@
 											<a style="font-weight: bold" href="/cloud/upload">根目录</a>
 										</li>
 										<li class="breadcrumb-item" v-for="parent in navigates" :key="parent.fileFolderId">
+											<template v-if="parent.fileFolderId == foid">
+												<a style="font-weight: bold">{{parent.fileFolderName}}</a>
+											</template>
 
-											<a style="font-weight: bold" @click="getFolders(parent.fileFolderId)" href="#">{{parent.fileFolderName}}</a>
+											<template v-else>
+												<a style="font-weight: bold" @click="getFolders(parent.fileFolderId)" href="#">{{parent.fileFolderName}}</a>
+											</template>
 										</li>
 									</ol>
 								</nav>

@@ -51,7 +51,13 @@
 									</li>
 									<li class="breadcrumb-item" v-for="parent in navigates" :key="parent.fileFolderId">
 
-										<a style="font-weight: bold" @click="getFolders(parent.fileFolderId)" href="#">{{parent.fileFolderName}}</a>
+										<template v-if="parent.fileFolderId == foid">
+											<a style="font-weight: bold">{{parent.fileFolderName}}</a>
+										</template>
+
+										<template v-else>
+											<a style="font-weight: bold" @click="getFolders(parent.fileFolderId)" href="#">{{parent.fileFolderName}}</a>
+										</template>
 									</li>
 								</ol>
 							</nav>
