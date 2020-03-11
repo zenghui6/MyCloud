@@ -17,8 +17,12 @@ import org.slf4j.Logger;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
@@ -176,6 +180,52 @@ public class MyFileController extends BaseController {
         System.out.println(fileList);
 
         return Result.succuess(fileList);
+    }
+
+    /**
+     * 下载文件,下载的文件通过HTTPServletResponse,传给浏览器
+     * @param fid
+     * @param response
+     * @return
+     */
+    @GetMapping("/downloadFile")
+    public Object downloadFile(@RequestParam("fid") Integer fid, HttpServletResponse response){
+        //获取要下载的文件信息
+        MyFile myFile = myFileService.getFileByFileId(fid);
+        //ftp上的文件地址
+        String remotePath = myFile.getMyFilePath();
+        String fileName = myFile.getMyFileName()+myFile.getPostfix();
+
+        try{
+            //输出缓冲流
+            OutputStream os = new BufferedOutputStream(response.getOutputStream());
+            //设置返回类型和编码
+            response.setCharacterEncoding("utf-8");
+            //响应内容类型
+            response.setContentType("multipart/form-data");
+            //文件名转码,不然呢会出现中文乱码  attachment意味着消息体应该被下载到本地
+            response.setHeader("Content-Disposition","attachment;fileName="+ URLEncoder.encode(fileName,"UTF-8"));
+
+            FtpUtils ftpUtils = new FtpUtils();
+            boolean flag = ftpUtils.downloadFile("/"+remotePath,fileName,os);
+
+            if (flag){
+                //下载文件成功了,开始更新数据库数据
+                MyFile newFile = new MyFile();
+                newFile.setMyFileId(myFile.getMyFileId());
+                newFile.setDownloadTime(myFile.getDownloadTime() + 1);
+                myFileService.updateFile(newFile);
+
+                os.flush();
+                os.close();
+                logger.info("文件下载成功: "+myFile.getMyFileName()+myFile.getPostfix());
+                return Result.succuess("文件下载成功");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        logger.info("文件下载失败: "+myFile.getMyFileName()+myFile.getPostfix());
+        return Result.fail("文件下载失败");
     }
 
     /**

@@ -29,6 +29,31 @@ public class MyFileServiceImpl extends BaseService  implements MyFileService {
     }
 
     /**
+     * selectlive更新文件
+     *   数据库连接url 设置了&useAffectedRows=true  #mybatis返回的是受影响的函行数
+     * @param myFile
+     * @return
+     */
+    @Override
+    public boolean updateFile(MyFile myFile) {
+        if (myFileMapper.updateByPrimaryKeySelective(myFile) != 0){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 下载文件,根据文件id获取文件信息
+     *
+     * @param fid
+     * @return
+     */
+    @Override
+    public MyFile getFileByFileId(Integer fid) {
+        return myFileMapper.selectByPrimaryKey(fid);
+    }
+
+    /**
      * 查找文件夹下的所有文件
      * @param folderId
      * @return

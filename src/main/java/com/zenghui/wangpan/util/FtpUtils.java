@@ -1,11 +1,6 @@
 package com.zenghui.wangpan.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -173,6 +168,54 @@ public class FtpUtils {
                 }
             }
         }
+    }
+
+    public boolean downloadFile(String remotePath, String fileName, OutputStream outputStream) throws IOException {
+        FTPClient ftp=new FTPClient();
+        boolean result =false;
+        try {
+            ftp.connect(host, port);
+            ftp.login(username, password);
+            //设置文件编码格式
+            ftp.setControlEncoding("UTF-8");
+            //ftp通信有两种模式
+            //PORT(主动模式)客户端开通一个新端口(>1024)并通过这个端口发送命令或传输数据,期间服务端只使用他开通的一个端口，例如21
+            //PASV(被动模式)客户端向服务端发送一个PASV命令，服务端开启一个新端口(>1024),并使用这个端口与客户端的21端口传输数据
+            //由于客户端不可控，防火墙等原因，所以需要由服务端开启端口，需要设置被动模式
+            ftp.enterLocalPassiveMode();
+            //设置传输方式为流方式
+            ftp.setFileTransferMode(FTP.STREAM_TRANSFER_MODE);
+            //获取状态码，判断是否连接成功
+            if(!FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
+                throw new RuntimeException("FTP服务器拒绝连接");
+            }
+
+            //转移到FTP服务器目录 basePath是配置的存储目录
+            if(!ftp.changeWorkingDirectory(basePath+remotePath)) {
+                throw new RuntimeException("文件路径不存在："+basePath+remotePath);
+            }
+            ftp.enterLocalPassiveMode();
+            FTPFile[] fs = ftp.listFiles();
+            for (FTPFile ff : fs) {
+                if (ff.getName().equals(fileName)){
+                    ftp.enterLocalPassiveMode();
+                    ftp.retrieveFile(remotePath + "/" + fileName, outputStream);
+                    result = true;
+                }
+            }
+            ftp.logout();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }finally {
+            if(ftp.isConnected()) {
+                try {
+                    ftp.disconnect();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        return result;
     }
     /**
      *

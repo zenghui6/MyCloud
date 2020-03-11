@@ -19,6 +19,20 @@ public interface MyFileService {
     boolean add(MyFile myFile);
 
     /**
+     * selectlive更新文件
+     * @param myFile
+     * @return
+     */
+    boolean updateFile(MyFile myFile);
+
+    /**
+     * 下载文件,根据文件id获取文件信息
+     * @param fid
+     * @return
+     */
+    MyFile getFileByFileId(Integer fid);
+
+    /**
      * 查找文件夹下的所有文件
      * @param folderId
      * @return
