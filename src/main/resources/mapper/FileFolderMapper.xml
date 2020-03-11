@@ -24,7 +24,7 @@
       <include refid="Base_Column_List"/>
       from file_store left join file_folder
       on file_store.file_store_id = file_folder.file_store_id
-      where file_folder.parent_folder_id=0
+      where file_folder.parent_folder_id=0 and file_store.file_store_id = #{fileStoreId}
     </select>
   <select id="getFileFolderByParentFolderId" resultType="com.zenghui.wangpan.entity.FileFolder">
     select

@@ -29,10 +29,9 @@ public class FileTest {
 
         System.out.println(listRoot);
 
-        List<MyFile> files = myFileMapper.listFileByFolderId(1);
-        for (MyFile curFile:files ) {
-            System.out.println(curFile.equals("aaa"));
-        }
+        List<MyFile> files = myFileMapper.listFileByFolderId(10);
+
         System.out.println(files);
     }
+
 }

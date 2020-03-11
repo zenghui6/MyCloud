@@ -5,16 +5,16 @@
 	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" name="viewport">
 	<title>莫提网盘-我的文件</title>
 
-	<link rel="stylesheet" href="u-admin/dist/modules/bootstrap/css/bootstrap.min.css">
-	<link rel="stylesheet" href="u-admin/dist/modules/ionicons/css/ionicons.min.css">
-	<link rel="stylesheet" href="u-admin/dist/modules/fontawesome/web-fonts-with-css/css/fontawesome-all.min.css">
+	<link rel="stylesheet" href="static/u-admin/dist/modules/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="static/u-admin/dist/modules/ionicons/css/ionicons.min.css">
+	<link rel="stylesheet" href="static/u-admin/dist/modules/fontawesome/web-fonts-with-css/css/fontawesome-all.min.css">
 
-	<link rel="stylesheet" href="u-admin/dist/modules/summernote/summernote-lite.css">
-	<link rel="stylesheet" href="u-admin/dist/modules/flag-icon-css/css/flag-icon.min.css">
-	<link rel="stylesheet" href="u-admin/dist/css/demo.css">
-	<link rel="stylesheet" href="u-admin/dist/css/style.css">
-	<link rel="stylesheet" href="plug-ins/xcConfirm/css/xcConfirm.css">
-	<link rel="stylesheet" href="plug-ins/context-menu/css/contextMenu.css">
+	<link rel="stylesheet" href="static/u-admin/dist/modules/summernote/summernote-lite.css">
+	<link rel="stylesheet" href="static/u-admin/dist/modules/flag-icon-css/css/flag-icon.min.css">
+	<link rel="stylesheet" href="static/u-admin/dist/css/demo.css">
+	<link rel="stylesheet" href="static/u-admin/dist/css/style.css">
+	<link rel="stylesheet" href="static/plug-ins/context-menu/css/contextMenu.css">
+	<link rel="stylesheet" href="static/plug-ins/BeAlert/BeAlert.css">
 	<style>
 		.files-items{
 			margin-top: -20px;
@@ -35,10 +35,10 @@
 		<div th:replace="commons/bar::#top"></div>
 		<div th:replace="commons/bar::#sidebar"></div>
 
-		<div class="main-content">
+		<div class="main-content" id="main">
 			<section class="section">
 				<h1 class="section-header">
-					<div><i class="ion ion-folder"></i> 全部文件 <span style="color: red;font-size: 14px" th:if="${error != null}" th:text="${error}"></span></div>
+					<div><i class="ion ion-folder"></i> 全部文件 <span style="color: red;font-size: 14px" ></span></div>
 				</h1>
 				<div class="row">
 					<div class="col-12 col-sm-12 col-lg-12">
@@ -46,28 +46,12 @@
 						<div class="card-body">
 							<nav aria-label="breadcrumb" class="empty-space">
 								<ol class="breadcrumb">
-									<li class="breadcrumb-item"><a
-											th:href="@{/files(fId=${nowFolder.fileFolderId})}"
-											title="刷新"><i
-											class="icon ion-refresh"></i></a>
+									<li class="breadcrumb-item">
+										<a style="font-weight: bold" href="/cloud/files">根目录</a>
 									</li>
-									<li th:class="${nowFolder.fileFolderId == 0?'breadcrumb-item active':'breadcrumb-item'}">
-                                                            <span th:if="${nowFolder.fileFolderId == 0}"
-																  th:text="根目录"></span><a style="font-weight: bold"
-																						  th:if="${nowFolder.fileFolderId != 0}"
-																						  href="files">根目录</a></li>
-									<li th:each="l:${location}" class="breadcrumb-item"><a
-											style="font-weight: bold"
-											th:href="@{/files(fId=${l.fileFolderId},fName=${l.fileFolderName})}"
-											th:text="${l.fileFolderName}"></a></li>
-									<li th:if="${nowFolder.fileFolderId != 0}"
-										class="breadcrumb-item active" aria-current="page"
-										th:text="${nowFolder.fileFolderName}"></li>
-									<li th:if="${nowFolder.fileFolderId != 0}"
-										class="breadcrumb-item"><a
-											th:href="@{/files(fId=${nowFolder.parentFolderId})}"
-											title="返回上一层"><i
-											class="icon ion-arrow-return-left"></i></a>
+									<li class="breadcrumb-item" v-for="parent in navigates" :key="parent.fileFolderId">
+
+										<a style="font-weight: bold" @click="getFolders(parent.fileFolderId)" href="#">{{parent.fileFolderName}}</a>
 									</li>
 								</ol>
 							</nav>
@@ -83,39 +67,82 @@
 											<th>下载次数</th>
 											<th>上传时间</th>
 										</tr>
-										<tr th:each="folder:${folders}" class="files-items folders">
-											<td><span style="display: none" th:text="${folder.fileFolderId}"></span><i style="font-size: 24px;color: orange" class="icon ion-android-folder"></i></td>
+										<tr  class="files-items folders" v-for="folder in folders">
+											<td><span style="display: none" >{{folder.fileFolderId}}</span><i style="font-size: 24px;color: orange" class="icon ion-android-folder"></i></td>
 											<td>
-												<a th:href="@{/files(fId=${folder.fileFolderId},fName=${folder.fileFolderName})}" style="font-weight: 700;color: black" th:text="${folder.fileFolderName}"></a>
+												<a  href="#" @click="getFolders(folder.fileFolderId)" style="font-weight: 700;color: black">{{folder.fileFolderName}}</a>
 											</td>
 											<td style="font-weight: 300">文件夹</td>
 											<td style="font-weight: 300">-</td>
 											<td style="font-weight: 300">-</td>
 											<td style="font-weight: 300">-</td>
-											<td style="font-weight: 300" th:text="${#dates.format(folder.time,'yyyy-MM-dd HH:mm')}"></td>
+											<td style="font-weight: 300">{{folder.time}}</td>
 										</tr>
-										<tr th:each="f:${files}" class="files-items files">
-											<td><span style="display: none" th:text="${f.myFileId}"></span>
-												<i style="font-size: 24px;color: #3498db" th:if="${f.type == 1}" class="icon ion-document-text"></i>
-												<i style="font-size: 24px;color: #28a745" th:if="${f.type == 2}" class="icon ion-image"></i>
-												<i style="font-size: 24px;color: #FFC107" th:if="${f.type == 3}" class="icon ion-ios-videocam"></i>
-												<i style="font-size: 24px;color: #dc3545" th:if="${f.type == 4}" class="icon ion-ios-musical-notes"></i>
-												<i style="font-size: 24px;color: #343A40" th:if="${f.type == 5}" class="icon ion-document"></i>
+
+										<tr  class="files-items files" v-for="f in files">
+											<td><span style="display: none" >{{f.myFileId}}</span>
+
+												<template v-if="f.type == 1 ">
+													<i style="font-size: 24px;color: #3498db" class="icon ion-document-text"></i>
+												</template>
+
+												<template v-if="f.type == 2 ">
+													<i style="font-size: 24px;color: #28a745" class="icon ion-image"></i>
+												</template>
+
+												<template v-if="f.type == 3 ">
+													<i style="font-size: 24px;color: #FFC107" class="icon ion-ios-videocam"></i>
+												</template>
+
+												<template v-if="f.type == 4 ">
+													<i style="font-size: 24px;color: #dc3545" class="icon ion-ios-musical-notes"></i>
+												</template>
+
+												<template v-if="f.type == 5 ">
+													<i style="font-size: 24px;color: #343A40" class="icon ion-document"></i>
+												</template>
 											</td>
+
 											<td>
-												<a th:href="@{downloadFile(fId=${f.myFileId})}" style="font-weight: 700;color: black" th:text="${f.myFileName}"></a>
+												<a href="下载" style="font-weight: 700;color: black">{{f.myFileName}}</a>
 											</td>
-											<td style="font-weight: 300" th:if="${f.type == 1}">文档</td>
-											<td style="font-weight: 300" th:if="${f.type == 2}">图像</td>
-											<td style="font-weight: 300" th:if="${f.type == 3}">视频</td>
-											<td style="font-weight: 300" th:if="${f.type == 4}">音乐</td>
-											<td style="font-weight: 300" th:if="${f.type == 5}">其他</td>
-											<td style="font-weight: 300" th:text="${f.postfix}"></td>
-											<td style="font-weight: 300" th:if="${f.size > 1024}" th:text="${f.size/1024 +'MB'}"></td>
-											<td style="font-weight: 300" th:if="${f.size < 1024}" th:text="${f.size +'KB'}"></td>
-											<td style="font-weight: 300" th:text="${f.downloadTime} + ' 次'"></td>
-											<td style="font-weight: 300" th:text="${#dates.format(f.uploadTime,'yyyy-MM-dd HH:mm')}">2020-02-02 15:08</td>
+
+
+
+											<template v-if="f.type == 1 ">
+												<td style="font-weight: 300">文档</td>
+											</template>
+
+											<template v-if="f.type == 2 ">
+												<td style="font-weight: 300">图像</td>
+											</template>
+
+											<template v-if="f.type == 3 ">
+												<td style="font-weight: 300" >视频</td>
+											</template>
+
+											<template v-if="f.type == 4 ">
+												<td style="font-weight: 300" >音乐</td>
+											</template>
+
+											<template v-if="f.type == 5 ">
+												<td style="font-weight: 300" >其他</td>
+											</template>
+
+											<td style="font-weight: 300">{{f.postfix}}</td>
+
+											<template v-if="f.size >= 1024 ">
+												<td style="font-weight: 300">{{f.size/1024 +'MB'}}</td>
+											</template>
+
+											<template v-if="f.size < 1024 ">
+												<td style="font-weight: 300">{{f.size +'KB'}}</td>
+											</template>
+
+											<td style="font-weight: 300">{{f.downloadTime}}次</td>
+											<td style="font-weight: 300">{{f.uploadTime}}</td>
 										</tr>
+
 									</table>
 								</div>
 							</div>
@@ -130,8 +157,8 @@
 					</div>
 					</div>
 				</div>
-				<span id="nowF" style="display: none" th:text="${nowFolder.fileFolderId}"></span>
-				<span id="preF" style="display: none" th:text="${nowFolder.parentFolderId}"></span>
+<!--				<span id="nowF" style="display: none" th:text="${nowFolder.fileFolderId}"></span>-->
+<!--				<span id="preF" style="display: none" th:text="${nowFolder.parentFolderId}"></span>-->
 				<span id="tarFolder" style="display: none"></span>
 				<span id="tarFile" style="display: none"></span>
 			</section>
@@ -139,6 +166,86 @@
 		<div th:replace="commons/bar::#footer"></div>
 	</div>
 </div>
+</div>
+<script src="static/plug-ins/BeAlert/BeAlert.js"></script>
+<script src="static/js/vue@2.6.11.js"></script>
+<script src="static/js/axios.min.js"></script>
+<script>
+
+	let vm = new Vue({
+		el: '#main',
+		data: {
+			foid: '',
+			pid: '', //当前目录的父亲id
+			folders: '',
+			files: '',
+			newFolder:'',
+			navigates: ''	//面包屑导航
+		},
+		mounted: function () {
+			this.getFolders(0);
+			window.getFolders = this.getFolders;
+		},
+		methods: {
+			getFolders: function (foid) {
+				this.foid = foid;
+				//并发的异步请求
+				axios.all([
+					axios.get("/cloud/folder?foid=" + foid),
+					axios.get("/cloud/folderParents?foid=" + foid),
+					axios.get("/cloud/myfiles?foid="+foid)
+				]).then(axios.spread(function (folderResponse, parentsResponse , fileResponse) {
+					vm.folders = folderResponse.data.data;
+					// vm.pid = folderResponse.data.data[0].parentFolderId;
+
+					vm.navigates = parentsResponse.data.data;
+					vm.files = fileResponse.data.data;
+					console.log(parentsResponse.data.data);
+				}));
+
+				console.log("当前文件夹id: " + this.foid);
+			},
+
+		}
+	});
+
+	//新建文件夹
+	function addFolderElement() {
+		//在表格第一行插入
+		$("#files-table tr:first").after("<tr class='files-items folders' id='newtr'> <td><span style='display: none'></span><i style='font-size: 24px;color: orange' class='icon ion-android-folder'></i></td>"+
+				"<td>" +
+				"<input id='newFolder' autocomplete='off' name='fileFolderName' type='text' onblur='checkAddFolder()'>" +
+				"</td>"+
+				"</tr>");
+
+		$('#newFolder').focus();
+	}
+	function checkAddFolder() {
+		var name = $.trim($("#newFolder").val());
+		var nameReg = /^[\u4E00-\u9FA5A-Za-z0-9]{1,20}$/;
+		if (!nameReg.test(name)) {
+
+			alert("创建文件夹失败","文件夹格式错误！【汉字、字母、数字】",function () {
+				$('#newtr').remove();
+				getFolders(vm.foid);
+			},{type: 'error',confirmButtonText: '知道了'});
+
+		}else{
+			var newFolderName = $('#newFolder').val();
+			console.log(newFolderName);
+			var newFolder = {"fileFolderName" : newFolderName, "parentFolderId" :vm.foid};
+			axios.post('/cloud/addFolder',newFolder).then(function (response) {
+				$('#newtr').remove();
+				getFolders(vm.foid);
+			})
+		}
+	}
+
+
+</script>
+
+
+
 <script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
 <script>
 	$(function () {
@@ -178,8 +285,8 @@
 		});
 	});
 </script>
-<script src="plug-ins/context-menu/js/jquery.contextMenu.min.js"></script>
-<script src="static/plug-ins/xcConfirm/js/xcConfirm.js"></script>
+<script src="static/plug-ins/context-menu/js/jquery.contextMenu.min.js"></script>
+<script src="static/plug-ins/BeAlert/BeAlert.js"></script>
 <script>
 	$(".files").contextMenu({
 		width: 100, // width
@@ -359,32 +466,6 @@
 			return;
 		}
 	}
-	function addFolderElement() {
-		var now = $('#nowF').html();
-		$("<tr class='files-items folders'><td><i style='font-size: 24px;color: orange' class='icon ion-android-folder'></i></td>" +
-				"<td>" +
-				"<form id='addFolderForm' action='addFolder' method='post'>" +
-				"<input id='newFolder'  autocomplete='off' name='fileFolderName' type='text' onblur='checkAddFolder()'>" +
-				"<input type='hidden' name='parentFolderId' value='"+now+"'>" +
-				"</form>" +
-				"</td>" +
-				"<td style='font-weight: 300'>文件夹</td>" +
-				"<td style='font-weight: 300'>-</td>" +
-				"<td style='font-weight: 300'>-</td>" +
-				"</tr>").insertAfter($('#files-table-title'));
-		$('#newFolder').focus();
-	}
-	function checkAddFolder() {
-		var name = $.trim($("#newFolder").val());
-		var nameReg = /^[\u4E00-\u9FA5A-Za-z0-9]{1,20}$/;
-		if (!nameReg.test(name)) {
-			alert("文件夹格式错误！【汉字、字母、数字】");
-			var location = window.location.href;
-			window.location.href = location;
-		}else{
-			$('#addFolderForm').submit();
-		}
-	}
 	function checkUpdateFolder() {
 		var name = $.trim($("#updateFolderName").val());
 		var nameReg = /^[\u4E00-\u9FA5A-Za-z0-9]{2,20}$/;
@@ -408,20 +489,20 @@
 		}
 	}
 </script>
-<script src="u-admin/dist/modules/jquery.min.js"></script>
-<script src="u-admin/dist/modules/popper.js"></script>
-<script src="u-admin/dist/modules/tooltip.js"></script>
-<script src="u-admin/dist/modules/bootstrap/js/bootstrap.min.js"></script>
-<script src="u-admin/dist/modules/nicescroll/jquery.nicescroll.min.js"></script>
-<script src="u-admin/dist/modules/scroll-up-bar/dist/scroll-up-bar.min.js"></script>
-<script src="u-admin/dist/js/sa-functions.js"></script>
+<script src="static/u-admin/dist/modules/jquery.min.js"></script>
+<script src="static/u-admin/dist/modules/popper.js"></script>
+<script src="static/u-admin/dist/modules/tooltip.js"></script>
+<script src="static/u-admin/dist/modules/bootstrap/js/bootstrap.min.js"></script>
+<script src="static/u-admin/dist/modules/nicescroll/jquery.nicescroll.min.js"></script>
+<script src="static/u-admin/dist/modules/scroll-up-bar/dist/scroll-up-bar.min.js"></script>
+<script src="static/u-admin/dist/js/sa-functions.js"></script>
 
-<script src="u-admin/dist/modules/chart.min.js"></script>
-<script src="u-admin/dist/modules/summernote/summernote-lite.js"></script>
+<script src="static/u-admin/dist/modules/chart.min.js"></script>
+<script src="static/u-admin/dist/modules/summernote/summernote-lite.js"></script>
 
-<script src="u-admin/dist/js/scripts.js"></script>
-<script src="u-admin/dist/js/custom.js"></script>
-<script src="u-admin/dist/js/demo.js"></script>
-<script src="u-admin/dist/modules/chart.min.js"></script>
+<script src="static/u-admin/dist/js/scripts.js"></script>
+<script src="static/u-admin/dist/js/custom.js"></script>
+<script src="static/u-admin/dist/js/demo.js"></script>
+<script src="static/u-admin/dist/modules/chart.min.js"></script>
 </body>
 </html>

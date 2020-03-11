@@ -1,6 +1,7 @@
 package com.zenghui.wangpan;
 
 import com.zenghui.wangpan.entity.FileFolder;
+import com.zenghui.wangpan.mapper.FileFolderMapper;
 import com.zenghui.wangpan.service.FileFolderService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,6 +25,7 @@ import java.util.List;
 public class FileFolderTest {
     @Autowired
     FileFolderService fileFolderService;
+    FileFolderMapper fileFolderMapper;
 
     @Test
     public void test(){
@@ -45,5 +47,12 @@ public class FileFolderTest {
         }
         FileFolder pf = fileFolderService.getById(fileFolder.getParentFolderId());
         return ReturnRead(pf);
+    }
+
+    @Test
+    public void queryAll(){
+        List<FileFolder> list = fileFolderMapper.getFileFolderByParentFolderId(2);
+        System.out.println(list);
+
     }
 }

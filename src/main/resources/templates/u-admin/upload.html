@@ -81,16 +81,11 @@
 								<nav aria-label="breadcrumb" class="empty-space">
 									<ol class="breadcrumb">
 										<li class="breadcrumb-item">
-											<a title="刷新"><i class="icon ion-refresh"></i></a>
-										</li>
-										<li class="breadcrumb-item">
 											<a style="font-weight: bold" href="/cloud/upload">根目录</a>
 										</li>
 										<li class="breadcrumb-item" v-for="parent in navigates" :key="parent.fileFolderId">
 
 											<a style="font-weight: bold" @click="getFolders(parent.fileFolderId)" href="#">{{parent.fileFolderName}}</a>
-										</li>
-										<li class="breadcrumb-item"><a title="返回上一层"><i class="icon ion-arrow-return-left"></i></a>
 										</li>
 									</ol>
 								</nav>
@@ -205,7 +200,7 @@
 				alert("创建文件夹失败","文件夹格式错误！【汉字、字母、数字】",function () {
 					$('#newtr').remove();
 					getFolders(vm.foid);
-				},{type: 'error',confirmButtonText: '好的'});
+				},{type: 'error',confirmButtonText: '知道了'});
 
 			}else{
 				var newFolderName = $('#newFolder').val();

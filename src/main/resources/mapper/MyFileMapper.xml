@@ -27,18 +27,18 @@
     where my_file.my_file_id = #{myFileId,jdbcType=INTEGER}
   </select>
 
-  <select id="listFileByFolderId" resultMap="BaseResultMap">
+  <select id="listFileByFolderId" resultType="com.zenghui.wangpan.entity.MyFile">
     select
-    <include refid="Base_Column_List"/>
+    *
     from file_folder left join my_file
-    on file_folder.file_folder_id =  my_file.file_folder_id
-    where file_folder.file_folder_id = #{folderId,jdbcType=INTEGER}
+    on my_file.file_folder_id =  file_folder.file_folder_id
+    where my_file.file_folder_id = #{folderId,jdbcType=INTEGER}
   </select>
 
 
-  <select id="listRootFileByStoreId" resultMap="BaseResultMap">
+  <select id="listRootFileByStoreId" resultType="com.zenghui.wangpan.entity.MyFile">
     select
-    <include refid="Base_Column_List"/>
+    *
     from my_file
     where file_folder_id = 0 and file_store_id = #{storeId}
   </select>

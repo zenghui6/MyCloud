@@ -1,5 +1,6 @@
 package com.zenghui.wangpan.controller;
 
+import com.zenghui.wangpan.entity.FileFolder;
 import com.zenghui.wangpan.entity.FileStore;
 import com.zenghui.wangpan.entity.MyFile;
 import com.zenghui.wangpan.entity.User;
@@ -7,6 +8,7 @@ import com.zenghui.wangpan.util.FtpUtils;
 import com.zenghui.wangpan.util.LogUtils;
 import com.zenghui.wangpan.util.Result;
 import org.springframework.http.HttpRequest;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -151,6 +153,29 @@ public class MyFileController extends BaseController {
             e.printStackTrace();
         }
         return Result.fail();
+    }
+
+    /**
+     * 根据传入的当前文件夹foid 找到当前目录下的所有文件
+     * 如果foid = 0 ,就是仓库根目录
+     * @return
+     */
+    @GetMapping("/myfiles")
+    public Object listFolderByParentId(@RequestParam(value = "foid" ,defaultValue = "0") Integer foid ,HttpSession  session){
+        User loginUser = (User)session.getAttribute("loginUser");
+        int curStoreId = loginUser.getFileStoreId();
+
+        List<MyFile> fileList = null;
+        if (foid == 0){
+            fileList = myFileService.listRootFileByStoreId(curStoreId);
+        }
+        else{
+            fileList = myFileService.listFileByFolderId(foid);
+        }
+
+        System.out.println(fileList);
+
+        return Result.succuess(fileList);
     }
 
     /**
