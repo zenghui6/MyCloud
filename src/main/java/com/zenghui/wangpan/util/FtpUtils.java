@@ -199,8 +199,15 @@ public class FtpUtils {
             for (FTPFile ff : fs) {
                 if (ff.getName().equals(fileName)){
                     ftp.enterLocalPassiveMode();
-                    ftp.retrieveFile(remotePath + "/" + fileName, outputStream);
-                    result = true;
+                    //emmm这个地方使用的是用户的家目录的绝路径,要加 basePath, debug了半天
+                    boolean isSuccess = ftp.retrieveFile(basePath+remotePath + "/" + fileName, outputStream);
+                    if (!isSuccess){
+                        System.out.println("文件写入流文件失败");
+                        result =false;
+                    }else {
+                        result = true;
+                    }
+
                 }
             }
             ftp.logout();

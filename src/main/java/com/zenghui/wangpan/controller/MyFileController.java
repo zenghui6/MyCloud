@@ -189,7 +189,7 @@ public class MyFileController extends BaseController {
      * @return
      */
     @GetMapping("/downloadFile")
-    public Object downloadFile(@RequestParam("fid") Integer fid, HttpServletResponse response){
+    public void downloadFile(@RequestParam("fid") Integer fid, HttpServletResponse response){
         //获取要下载的文件信息
         MyFile myFile = myFileService.getFileByFileId(fid);
         //ftp上的文件地址
@@ -219,13 +219,13 @@ public class MyFileController extends BaseController {
                 os.flush();
                 os.close();
                 logger.info("文件下载成功: "+myFile.getMyFileName()+myFile.getPostfix());
-                return Result.succuess("文件下载成功");
+//                return Result.succuess("文件下载成功");
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         logger.info("文件下载失败: "+myFile.getMyFileName()+myFile.getPostfix());
-        return Result.fail("文件下载失败");
+//        return Result.fail("文件下载失败");
     }
 
     /**
