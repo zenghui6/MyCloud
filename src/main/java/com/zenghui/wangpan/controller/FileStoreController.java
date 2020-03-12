@@ -1,6 +1,8 @@
 package com.zenghui.wangpan.controller;
 
 import com.zenghui.wangpan.entity.FileFolder;
+import com.zenghui.wangpan.entity.FileStore;
+import com.zenghui.wangpan.entity.FileStoreStatistics;
 import com.zenghui.wangpan.entity.User;
 import com.zenghui.wangpan.util.LogUtils;
 import com.zenghui.wangpan.util.MiscUtil;
@@ -127,5 +129,47 @@ public class FileStoreController extends BaseController {
         System.out.println(ret);
 
         return Result.succuess(ret);
+    }
+
+    /**
+     * 获取当前用户仓库的状态,文件数,文件夹数...
+     * 1:文本类型   2:图像类型  3:视频类型  4:音乐类型  5:其他类型
+     * @param session
+     * @return
+     */
+    @GetMapping("/fileStoreStatus")
+    public Object getStatus(HttpSession session){
+        User loginUser =(User) session.getAttribute("loginUser");
+
+        FileStore curStore = fileStoreService.getByUserId(loginUser.getUserId());
+        int storeId = curStore.getFileStoreId();
+        //文件夹数
+        int folderNum = fileFolderService.countFileFolderByStoreId(storeId);
+
+        //文档
+        int doc = myFileService.listFilesByStoreIdAndType(storeId,1).size();
+        //图片数
+        int image = myFileService.listFilesByStoreIdAndType(storeId,2).size();
+        //视频数
+        int video = myFileService.listFilesByStoreIdAndType(storeId,3).size();
+        //音乐数
+        int music = myFileService.listFilesByStoreIdAndType(storeId,4).size();
+        //其他数
+        int other = myFileService.listFilesByStoreIdAndType(storeId,5).size();
+        //所有文件数
+        int fileCount = doc+image+video+music+other;
+
+        //采用FileStoreStatistics对象将信息封装
+        FileStoreStatistics fileStoreStatistics =  FileStoreStatistics.builder()
+                                                                        .doc(doc)
+                                                                        .image(image)
+                                                                        .fileCount(fileCount)
+                                                                        .fileStore(curStore)
+                                                                        .folderCount(fileCount)
+                                                                        .music(music)
+                                                                        .video(video)
+                                                                        .other(other).build();
+
+        return Result.succuess(fileStoreStatistics);
     }
 }

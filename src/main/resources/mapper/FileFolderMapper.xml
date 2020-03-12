@@ -32,7 +32,12 @@
     from file_folder
     where parent_folder_id = #{parentFolderId,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    <select id="countFileFolderByStoreId" resultType="java.lang.Integer">
+      select count(*)
+      from file_folder
+      where file_store_id = 5
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from file_folder
     where file_folder_id = #{fileFolderId,jdbcType=INTEGER}
   </delete>

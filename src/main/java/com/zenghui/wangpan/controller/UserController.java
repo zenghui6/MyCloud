@@ -118,7 +118,7 @@ public class UserController extends BaseController{
      */
     public String saveOrUpdateImageFile(User user,MultipartFile image,HttpServletRequest request) throws IOException {
         //得到路径,根据路径创建文件夹,默认会在项目下找public || static文件夹,找不到就去tomcat数据库下
-        File imageFolder = new File(request.getServletContext().getRealPath("img/user"));
+        File imageFolder = new File(request.getServletContext().getRealPath("img/user/"));
         //文件名
         String filename = image.getOriginalFilename();
         //获取文件后缀名 .jpg

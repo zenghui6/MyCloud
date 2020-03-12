@@ -3,6 +3,7 @@ package com.zenghui.wangpan.config;
 import com.zenghui.wangpan.interceptor.LoginInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -41,4 +42,11 @@ public class WebMvcConfigurati implements WebMvcConfigurer {
                     .addPathPatterns("/**")
                     .excludePathPatterns("/user","/login","/register","/static/**");
     }
+
+//    @Override
+//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//        //上传的图片在，访问路径如：http://localhost:8080/d3cf0281-bb7f-40e0-ab77-406db95ccf2c.jpg
+//        //其中pic表示访问的前缀。"file:E:\\Projects\\img_example\\"是文件真实的存储路径
+//        registry.addResourceHandler("/**").addResourceLocations("/home/zeng/Desktop/Java学习/wangpan/public/img/user/");
+//    }
 }

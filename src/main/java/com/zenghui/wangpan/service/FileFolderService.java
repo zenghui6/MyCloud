@@ -39,4 +39,11 @@ public interface FileFolderService {
      */
     boolean addFileFolder(FileFolder fileFolder);
 
+    /**
+     * 计算对应仓库下的所有文件夹数
+     * @param storeId
+     * @return
+     */
+    int countFileFolderByStoreId(Integer storeId);
+
 }

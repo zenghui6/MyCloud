@@ -34,4 +34,10 @@ public class FileTest {
         System.out.println(files);
     }
 
+    @Test
+    public void queryByType(){
+        List<MyFile> files = myFileMapper.listFilesByStoreIdAndType(5,5);
+        System.out.println(files);
+    }
+
 }

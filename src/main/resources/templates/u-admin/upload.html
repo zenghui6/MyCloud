@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" name="viewport">
-	<title>网盘-上传文件</title>
+	<title>604网盘-上传文件</title>
 
 	<link rel="stylesheet" href="static/u-admin/dist/modules/bootstrap/css/bootstrap.min.css">
 	<link rel="stylesheet" href="static/u-admin/dist/modules/ionicons/css/ionicons.min.css">
@@ -65,14 +65,15 @@
 <div id="app">
 	<div class="main-wrapper">
 		<div class="navbar-bg"></div>
-		<div th:replace="commons/bar::#top"></div>
-		<div th:replace="commons/bar::#sidebar"></div>
+		<div th:replace="commons/bar :: #top"></div>
+		<div th:replace="commons/bar :: sidebar(currUri='upload')"></div>
 
 		<div class="main-content" id="main">
 			<section class="section">
 				<h1 class="section-header">
 					<div><i class="ion ion-folder"></i> 上传文件 <span style="color: red;font-size: 14px"></span></div>
 				</h1>
+				<p style="text-align: center">  <i class="ion ion-alert"></i> 从右边子目录选择目录或新建目录</p>
 				<div class="row">
 					<div class="col-12 col-sm-12 col-lg-8">
 						<div class="card">
@@ -153,16 +154,18 @@
 <script>
 
 		let vm = new Vue({
-			el: '#main',
+			el: '#app',
 			data: {
 				foid: '',
 				pid: '', //当前目录的父亲id
 				folders: '',
 				newFolder:'',
-				navigates: ''	//面包屑导航
+				navigates: '',	//面包屑导航
+				status: ''
 			},
 			mounted: function () {
 				this.getFolders(0);
+				this.load();
 				window.getFolders = this.getFolders;
 			},
 			methods: {
@@ -181,6 +184,11 @@
 					}));
 
 					console.log("当前文件夹id: " + this.foid);
+				},
+				load: function () {
+					axios.get("/cloud/fileStoreStatus").then(function (response) {
+						vm.status = response.data.data;
+					})
 				},
 
 			}

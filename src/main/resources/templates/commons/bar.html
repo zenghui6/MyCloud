@@ -31,17 +31,19 @@
         </li>
     </ul>
 </nav>
-<div class="main-sidebar" id="sidebar">
+<div class="main-sidebar" th:fragment="sidebar (currUri)" id="main-bar">
     <aside id="sidebar-wrapper">
         <div class="sidebar-brand">
-            <a href="/cloud">莫提网盘</a>
+            <a href="/cloud">604网盘</a>
         </div>
         <div class="sidebar-user">
             <div class="sidebar-user-picture">
                 <a><img style="width: 50px;height: 50px" alt="image" src="static/u-admin/dist/img/avatar/avatar-1.jpeg"></a>
+<!--                有中文字符,部署的时候再说-->
+<!--                <a><img style="width: 50px;height: 50px" alt="image" th:src="${session.loginUser.imagePath}" }"></a>-->
             </div>
             <div class="sidebar-user-details">
-                <div class="user-name" th:text="${session.loginUser.getUserName()}">莫提</div>
+                <div class="user-name" th:text="${session.loginUser.getUserName()}"></div>
                 <div class="user-role">
                     普通用户
                 </div>
@@ -49,48 +51,48 @@
         </div>
         <ul class="sidebar-menu">
             <li class="menu-header">预览</li>
-            <li class="active">
-                <a href="index"><i class="ion ion-speedometer"></i><span>使用情况</span></a>
+            <li th:class="${currUri == 'index'?'active':''}">
+                <a href="/cloud"><i class="ion ion-speedometer"></i><span>使用情况</span></a>
             </li>
             <li class="menu-header">所有文件</li>
-            <li>
+            <li th:class="${currUri == 'all'?'active':''}">
                 <a href="files"><i class="ion ion-folder"></i> 全部文件</a>
             </li>
-            <li>
+            <li th:class="${currUri == 'upload'?'active':''}">
                 <a href="upload"><i class="ion ion-upload"></i> 上传文件</a>
             </li>
 
-            <li>
+            <li th:class="${currUri == 'doc' or currUri == 'image' or currUri == 'video' or currUri == 'music' or currUri == 'other'?'active':''}">
                 <a href="#" class="has-dropdown"><i class="ion ion-cube"></i><span>分类文件</span></a>
                 <ul class="menu-dropdown">
-                    <li>
+                    <li th:class="${currUri == 'doc'?'active':''}">
                         <a href="doc-files"><i class="ion ion-document-text"></i> 我的文档
-                            <div class="badge badge-primary">10</div>
+                            <div  class="badge badge-primary">{{status.doc}}</div>
                         </a>
                     </li>
-                    <li>
+                    <li th:class="${currUri == 'image'?'active':''}">
                         <a href="image-files"><i class="ion ion-image"></i> 我的图像
-                            <div  class="badge badge-primary">10</div>
+                            <div  class="badge badge-primary">{{status.image}}</div>
                         </a>
                     </li>
-                    <li>
+                    <li th:class="${currUri == 'video'?'active':''}">
                         <a href="video-files"><i class="ion ion-ios-videocam"></i> 我的视频
-                            <div class="badge badge-primary">10</div>
+                            <div  class="badge badge-primary">{{status.video}}</div>
                         </a>
                     </li>
-                    <li>
+                    <li th:class="${currUri == 'music'?'active':''}">
                         <a href="music-files"><i class="ion ion-ios-musical-notes"></i> 我的音频
-                            <div  class="badge badge-primary">10</div>
+                            <div  class="badge badge-primary">{{status.music}}</div>
                         </a>
                     </li>
-                    <li >
+                    <li th:class="${currUri == 'other'?'active':''}">
                         <a href="other-files"><i class="ion ion-help-circled"></i> 其他文件
-                            <div  class="badge badge-primary">10</div>
+                            <div class="badge badge-primary">{{status.other}}</div>
                         </a>
                     </li>
                 </ul>
             </li>
-            <li >
+            <li th:class="${currUri == 'help'?'active':''}">
                 <a href="help"><i class="ion ion-help-buoy"></i> 帮助</a>
             </li>
             <div class="p-3 mt-4 mb-4">
@@ -102,8 +104,9 @@
         </ul>
     </aside>
 </div>
-<footer class="main-footer" id="footer">
+<div id="footer">
 
-</footer>
+</div>
+
 </body>
 </html>

@@ -2,6 +2,8 @@ package com.zenghui.wangpan.mapper;
 
 import com.zenghui.wangpan.entity.MyFile;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.data.relational.core.sql.In;
 
 import java.util.List;
 
@@ -32,4 +34,12 @@ public interface MyFileMapper {
      * @return
      */
     List<MyFile> listRootFileByStoreId(Integer storeId);
+
+    /**
+     * 查找对应仓库id 下的 类型为 type 的 文件
+     * @param storeId
+     * @param type
+     * @return
+     */
+    List<MyFile> listFilesByStoreIdAndType(@Param("storeId") Integer storeId,@Param("type") Integer type);
 }

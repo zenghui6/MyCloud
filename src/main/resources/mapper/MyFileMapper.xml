@@ -42,8 +42,14 @@
     from my_file
     where file_folder_id = 0 and file_store_id = #{storeId}
   </select>
+    <select id="listFilesByStoreIdAndType" resultType="com.zenghui.wangpan.entity.MyFile">
+        select *
+        from my_file
+        where file_store_id = #{storeId}
+        and type = #{type}
+    </select>
 
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from my_file
     where my_file_id = #{myFileId,jdbcType=INTEGER}
   </delete>

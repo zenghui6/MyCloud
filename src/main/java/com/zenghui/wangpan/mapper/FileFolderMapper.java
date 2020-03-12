@@ -36,5 +36,10 @@ public interface FileFolderMapper {
      */
     List<FileFolder> getFileFolderByParentFolderId(Integer parentFolderId);
 
-
+    /**
+     * 计算对应仓库下的所有文件夹数
+     * @param storeId
+     * @return
+     */
+    int countFileFolderByStoreId(Integer storeId);
 }

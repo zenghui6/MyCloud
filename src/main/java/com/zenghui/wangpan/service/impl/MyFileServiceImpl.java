@@ -72,4 +72,16 @@ public class MyFileServiceImpl extends BaseService  implements MyFileService {
     public List<MyFile> listRootFileByStoreId(Integer storeId) {
         return myFileMapper.listRootFileByStoreId(storeId);
     }
+
+    /**
+     * 查找对应仓库id 下的 类型为 type 的 文件
+     *
+     * @param storeId
+     * @param type
+     * @return
+     */
+    @Override
+    public List<MyFile> listFilesByStoreIdAndType(Integer storeId, Integer type) {
+        return myFileMapper.listFilesByStoreIdAndType(storeId,type);
+    }
 }

@@ -58,6 +58,9 @@ public class FtpUtils {
             ftp.enterLocalPassiveMode();
             //设置传输方式为流方式
             ftp.setFileTransferMode(FTP.STREAM_TRANSFER_MODE);
+
+            path = new String(path.getBytes("GBK"),"iso-8859-1");
+            filename = new String(filename.getBytes("GBK"),"iso-8859-1");
             //获取状态码，判断是否连接成功
             if(!FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
                 throw new RuntimeException("FTP服务器拒绝连接");
@@ -185,11 +188,13 @@ public class FtpUtils {
             ftp.enterLocalPassiveMode();
             //设置传输方式为流方式
             ftp.setFileTransferMode(FTP.STREAM_TRANSFER_MODE);
+            remotePath = new String(remotePath.getBytes("GBK"),"iso-8859-1");
+            fileName = new String(fileName.getBytes("GBK"),"iso-8859-1");
             //获取状态码，判断是否连接成功
             if(!FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
                 throw new RuntimeException("FTP服务器拒绝连接");
             }
-
+            ftp.enterLocalPassiveMode();
             //转移到FTP服务器目录 basePath是配置的存储目录
             if(!ftp.changeWorkingDirectory(basePath+remotePath)) {
                 throw new RuntimeException("文件路径不存在："+basePath+remotePath);

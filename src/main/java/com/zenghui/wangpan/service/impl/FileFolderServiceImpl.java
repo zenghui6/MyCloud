@@ -60,4 +60,15 @@ public class FileFolderServiceImpl extends BaseService implements FileFolderServ
         }
         return false;
     }
+
+    /**
+     * 计算对应仓库下的所有文件夹数
+     *
+     * @param storeId
+     * @return
+     */
+    @Override
+    public int countFileFolderByStoreId(Integer storeId) {
+        return fileFolderMapper.countFileFolderByStoreId(storeId);
+    }
 }

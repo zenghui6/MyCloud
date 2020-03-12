@@ -1,6 +1,7 @@
 package com.zenghui.wangpan.service;
 
 import com.zenghui.wangpan.entity.MyFile;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -45,4 +46,12 @@ public interface MyFileService {
      * @return
      */
     List<MyFile> listRootFileByStoreId(Integer storeId);
+
+    /**
+     * 查找对应仓库id 下的 类型为 type 的 文件
+     * @param storeId
+     * @param type
+     * @return
+     */
+    List<MyFile> listFilesByStoreIdAndType(@Param("storeId") Integer storeId, @Param("type") Integer type);
 }

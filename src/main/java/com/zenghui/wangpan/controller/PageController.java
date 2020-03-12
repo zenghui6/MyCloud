@@ -51,4 +51,34 @@ public class PageController {
         session.invalidate();
         return "redirect:/";
     }
+
+    @GetMapping("/help")
+    public String help(){
+        return "u-admin/help";
+    }
+
+    @GetMapping("/doc-files")
+    public String docFiles(){
+        return "u-admin/doc-files";
+    }
+
+    @GetMapping("/image-files")
+    public String imageFiles(){
+        return "u-admin/image-files";
+    }
+
+    @GetMapping("/music-files")
+    public String musicFiles(){
+        return "u-admin/music-files";
+    }
+
+    @GetMapping("video-files")
+    public String videoFiles(){
+        return "u-admin/video-files";
+    }
+
+    @GetMapping("other-files")
+    public String otherFiles(){
+        return "u-admin/other-files";
+    }
 }

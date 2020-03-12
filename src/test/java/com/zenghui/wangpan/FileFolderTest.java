@@ -25,6 +25,8 @@ import java.util.List;
 public class FileFolderTest {
     @Autowired
     FileFolderService fileFolderService;
+
+    @Autowired
     FileFolderMapper fileFolderMapper;
 
     @Test
@@ -51,8 +53,9 @@ public class FileFolderTest {
 
     @Test
     public void queryAll(){
-        List<FileFolder> list = fileFolderMapper.getFileFolderByParentFolderId(2);
-        System.out.println(list);
+        int count = fileFolderMapper.countFileFolderByStoreId(5);
+
+        System.out.println(count);
 
     }
 }

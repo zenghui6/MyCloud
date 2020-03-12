@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="UTF-8">
 	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" name="viewport">
-	<title>莫提网盘-我的文件</title>
+	<title>604网盘-我的文件</title>
 
 	<link rel="stylesheet" href="static/u-admin/dist/modules/bootstrap/css/bootstrap.min.css">
 	<link rel="stylesheet" href="static/u-admin/dist/modules/ionicons/css/ionicons.min.css">
@@ -33,13 +33,15 @@
 	<div class="main-wrapper">
 		<div class="navbar-bg"></div>
 		<div th:replace="commons/bar::#top"></div>
-		<div th:replace="commons/bar::#sidebar"></div>
+		<div th:replace="commons/bar::sidebar(currUri='all')"></div>
 
 		<div class="main-content" id="main">
 			<section class="section">
 				<h1 class="section-header">
-					<div><i class="ion ion-folder"></i> 全部文件 <span style="color: red;font-size: 14px" ></span></div>
+					<div><i class="ion ion-folder"></i> 全部文件 <span style="color: red;font-size: 14px" ></span>
+					</div>
 				</h1>
+				<p style="text-align: center">  <i class="ion ion-alert"></i>   点击文件夹名称进入文件夹,点击文件名下载文件, 右键查看更多</p>
 				<div class="row">
 					<div class="col-12 col-sm-12 col-lg-12">
 						<div class="card">
@@ -179,17 +181,20 @@
 <script>
 
 	let vm = new Vue({
-		el: '#main',
+		el: '#app',
 		data: {
 			foid: '',
 			pid: '', //当前目录的父亲id
 			folders: '',
 			files: '',
 			newFolder:'',
-			navigates: ''	//面包屑导航
+			navigates: '',	//面包屑导航
+
+			status: ''
 		},
 		mounted: function () {
 			this.getFolders(0);
+			this.load();
 			window.getFolders = this.getFolders;
 		},
 		methods: {
@@ -212,6 +217,11 @@
 				console.log("当前文件夹id: " + this.foid);
 			},
 
+			load: function () {
+				axios.get("/cloud/fileStoreStatus").then(function (response) {
+					vm.status = response.data.data;
+				})
+			},
 		}
 	});
 
@@ -255,26 +265,6 @@
 <script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
 <script>
 	$(function () {
-		$('.folders').dblclick(function () {
-			let id = $(this).children("td").children("span").html();
-			var location = window.location.href;
-			let strings = location.split("?");
-			if (id != ""){
-				window.location.href = strings[0]+"?fId="+id;
-			}else{
-				return;
-			}
-		});
-		$('.files').dblclick(function () {
-			let id = $(this).children("td").children("span").html();
-			var location = window.location.href;
-			let strings = location.split("moti-cloud");
-			if (id != ""){
-				window.location.href = strings[0]+"moti-cloud/downloadFile?time="+new Date().getTime()+"&tip="+Math.random()*1000000+"&fId="+id;
-			}else{
-				return;
-			}
-		});
 		$('.folders').hover(function () {
 			let id = $(this).children("td").children("span").html();
 			$('#tarFolder').html(id);
@@ -296,7 +286,7 @@
 <script>
 	$(".files").contextMenu({
 		width: 100, // width
-		itemHeight: 30, // 菜单项height
+		itemHeight: 50, // 菜单项height
 		bgColor: "#fff", // 背景颜色
 		color: "#333", // 字体颜色
 		fontSize: 12, // 字体大小
@@ -304,19 +294,7 @@
 		target: function(ele) { // 当前元素
 			console.log(ele);
 		},
-		menu: [{ // 菜单项
-			text: " 下载",
-			callback: function() {
-				let id = $('#tarFile').html();
-				var location = window.location.href;
-				let strings = location.split("moti-cloud");
-				if (id != ""){
-					window.location.href = strings[0]+"moti-cloud/downloadFile?time="+new Date().getTime()+"&tip="+Math.random()*1000000+"&fId="+id;
-				}else{
-					return;
-				}
-			}
-		},
+		menu: [
 			{
 				text: " 分享",
 				callback: function() {
@@ -363,18 +341,15 @@
 					}
 				}
 			},
-			{
-				text: " 在线浏览",
-				callback: function() {
-					alert("在线浏览");
-				}
-			}
+
+
+
 		]
 
 	});
 	$(".folders").contextMenu({
 		width: 100, // width
-		itemHeight: 30, // 菜单项height
+		itemHeight: 50, // 菜单项height
 		bgColor: "#fff", // 背景颜色
 		color: "#333", // 字体颜色
 		fontSize: 12, // 字体大小
@@ -382,25 +357,7 @@
 		target: function(ele) { // 当前元素
 			console.log(ele);
 		},
-		menu: [{ // 菜单项
-			text: " 打开",
-			callback: function() {
-				let id = $('#tarFolder').html();
-				var location = window.location.href;
-				let strings = location.split("?");
-				if (id != ""){
-					window.location.href = strings[0]+"?fId="+id;
-				}else{
-					return;
-				}
-			}
-		},
-			{
-				text: " 返回上一级",
-				callback: function() {
-					toPreFolder();
-				}
-			},
+		menu: [
 			{
 				text: " 重命名",
 				callback: function() {
@@ -453,25 +410,9 @@
 					addFolderElement();
 				}
 			},
-			{
-				text: " 返回上一级",
-				callback: function() {
-					toPreFolder();
-				}
-			}
 		]
 
 	});
-	function toPreFolder() {
-		var location = window.location.href;
-		let strings = location.split("?");
-		var pre = $('#preF').html();
-		if (pre != ""){
-			window.location.href = strings[0]+"?fId="+pre;
-		}else{
-			return;
-		}
-	}
 	function checkUpdateFolder() {
 		var name = $.trim($("#updateFolderName").val());
 		var nameReg = /^[\u4E00-\u9FA5A-Za-z0-9]{2,20}$/;

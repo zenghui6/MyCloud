@@ -7,6 +7,7 @@ import com.zenghui.wangpan.entity.User;
 import com.zenghui.wangpan.util.FtpUtils;
 import com.zenghui.wangpan.util.LogUtils;
 import com.zenghui.wangpan.util.Result;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -219,13 +220,21 @@ public class MyFileController extends BaseController {
                 os.flush();
                 os.close();
                 logger.info("文件下载成功: "+myFile.getMyFileName()+myFile.getPostfix());
-//                return Result.succuess("文件下载成功");
+                return;
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         logger.info("文件下载失败: "+myFile.getMyFileName()+myFile.getPostfix());
-//        return Result.fail("文件下载失败");
+    }
+
+    @GetMapping("/getFilesByType")
+    public Object getFilesByType(@RequestParam("type") int type,HttpSession session){
+        User loginUser  = (User) session.getAttribute("loginUser");
+
+        List<MyFile> files = myFileService.listFilesByStoreIdAndType(loginUser.getFileStoreId(),type);
+
+        return Result.succuess(files);
     }
 
     /**
