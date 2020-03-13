@@ -250,52 +250,6 @@
 </script>
 <script src="static/plug-ins/context-menu/js/jquery.contextMenu.min.js"></script>
 <script src="static/plug-ins/BeAlert/BeAlert.js"></script>
-<script>
-	$(".folders").contextMenu({
-		width: 100, // width
-		itemHeight: 30, // 菜单项height
-		bgColor: "#fff", // 背景颜色
-		color: "#333", // 字体颜色
-		fontSize: 12, // 字体大小
-		hoverBgColor: "#3498db", // hover背景颜色
-		target: function(ele) { // 当前元素
-			console.log(ele);
-		},
-		menu: [{ // 菜单项
-			text: " 打开",
-			callback: function() {
-				let id = $('#tarFolder').html();
-				var location = window.location.href;
-				let strings = location.split("?");
-				if (id != ""){
-					window.location.href = strings[0]+"?fId="+id;
-				}else{
-					return;
-				}
-			}
-		},
-			{
-				text: " 返回上一级",
-				callback: function() {
-					toPreFolder();
-				}
-			}
-		]
-
-	});
-	function toPreFolder() {
-		var location = window.location.href;
-		let strings = location.split("?");
-		var pre = $('#preF').html();
-		if (pre != ""){
-			window.location.href = strings[0]+"?fId="+pre;
-		}else{
-			return;
-		}
-	}
-
-
-</script>
 
 <!--上传文件插件-->
 <script src="static/js/easyUploader.jq.js"></script>

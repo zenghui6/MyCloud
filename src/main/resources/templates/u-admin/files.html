@@ -41,7 +41,7 @@
 					<div><i class="ion ion-folder"></i> 全部文件 <span style="color: red;font-size: 14px" ></span>
 					</div>
 				</h1>
-				<p style="text-align: center">  <i class="ion ion-alert"></i>   点击文件夹名称进入文件夹,点击文件名下载文件, 右键查看更多</p>
+				<p style="text-align: center">  <i class="ion ion-alert"></i>   点击文件夹名称进入文件夹,点击文件名下载文件, 更多操作</p>
 				<div class="row">
 					<div class="col-12 col-sm-12 col-lg-12">
 						<div class="card">
@@ -74,6 +74,7 @@
 											<th>大小</th>
 											<th>下载次数</th>
 											<th>上传时间</th>
+											<th style="text-align: center">更多操作</th>
 										</tr>
 										<tr  class="files-items folders" v-for="folder in folders">
 											<td><span style="display: none" >{{folder.fileFolderId}}</span><i style="font-size: 24px;color: orange" class="icon ion-android-folder"></i></td>
@@ -85,10 +86,14 @@
 											<td style="font-weight: 300">-</td>
 											<td style="font-weight: 300">-</td>
 											<td style="font-weight: 300">{{folder.time}}</td>
+											<td>
+												<a class="btn btn-default" href="javaScript:updateFolderName()" role="button">重命名</a>
+												<a class="btn btn-default" href="#" role="button">删除</a>
+											</td>
 										</tr>
 
 										<tr  class="files-items files" v-for="f in files">
-											<td><span style="display: none" >{{f.myFileId}}</span>
+											<td><span style="display: none" id="fid">{{f.myFileId}}</span>
 
 												<template v-if="f.type == 1 ">
 													<i style="font-size: 24px;color: #3498db" class="icon ion-document-text"></i>
@@ -109,6 +114,8 @@
 												<template v-if="f.type == 5 ">
 													<i style="font-size: 24px;color: #343A40" class="icon ion-document"></i>
 												</template>
+
+
 											</td>
 
 											<td>
@@ -140,7 +147,7 @@
 											<td style="font-weight: 300">{{f.postfix}}</td>
 
 											<template v-if="f.size >= 1024 ">
-												<td style="font-weight: 300">{{f.size/1024 +'MB'}}</td>
+												<td style="font-weight: 300">{{f.size/1024 | numFilter }}MB</td>
 											</template>
 
 											<template v-if="f.size < 1024 ">
@@ -149,6 +156,11 @@
 
 											<td style="font-weight: 300">{{f.downloadTime}}次</td>
 											<td style="font-weight: 300">{{f.uploadTime}}</td>
+											<td>
+												<a class="btn btn-default" href="javaScript:updateFileName()" role="button">重命名</a>
+												<a class="btn btn-default" href="#" role="button">删除</a>
+												<a class="btn btn-default" href="#" role="button">分享</a>
+											</td>
 										</tr>
 
 									</table>
@@ -204,8 +216,8 @@
 				axios.all([
 					axios.get("/cloud/folder?foid=" + foid),
 					axios.get("/cloud/folderParents?foid=" + foid),
-					axios.get("/cloud/myfiles?foid="+foid)
-				]).then(axios.spread(function (folderResponse, parentsResponse , fileResponse) {
+					axios.get("/cloud/myfiles?foid=" + foid)
+				]).then(axios.spread(function (folderResponse, parentsResponse, fileResponse) {
 					vm.folders = folderResponse.data.data;
 					// vm.pid = folderResponse.data.data[0].parentFolderId;
 
@@ -222,6 +234,18 @@
 					vm.status = response.data.data;
 				})
 			},
+		},
+		filters: {
+			numFilter(value) {
+				let realVal = ''
+				if (!isNaN(value) && value !== '') {
+					// 截取当前数据到小数点后两位
+					realVal = parseFloat(value).toFixed(2)
+				} else {
+					realVal = '--'
+				}
+				return realVal
+			}
 		}
 	});
 
@@ -283,6 +307,89 @@
 </script>
 <script src="static/plug-ins/context-menu/js/jquery.contextMenu.min.js"></script>
 <script src="static/plug-ins/BeAlert/BeAlert.js"></script>
+
+<script>
+<!--	文件夹重命名 -->
+	function updateFolderName() {
+		let id = $('.flag td span').html();
+		let name = $('.flag td a').html();
+		let html = $('.flag td').eq(1).html($('' +
+				"<input id='updateFolderName' name='fileFolderName' autocomplete='off' type='text' onblur='checkUpdateFolder()' value='"+name+"'>" +
+				''));
+	};
+
+function checkUpdateFolder() {
+	var name = $.trim($("#updateFolderName").val());
+	var nameReg = /^[\u4E00-\u9FA5A-Za-z0-9]{2,20}$/;
+	if (!nameReg.test(name)) {
+		alert("创建文件夹失败","文件夹格式错误！【汉字、字母、数字】",function () {
+			$('updateFolderName').remove();
+			getFolders(vm.foid);
+		},{type: 'error',confirmButtonText: '知道了'});
+	}else{
+		let id = $('.flag td span').html();
+		var newFolderName = $('#updateFolderName').val();
+		var newFolder = {"fileFolderName" : newFolderName, "fileFolderId" :id};
+		axios.post('/cloud/updateFolder',newFolder).then(function (response) {
+			if (response.data.code === 0){
+				alert("","重命名成功",function () {
+					// $('updateFolderName').remove();
+					window.location.href = window.location.href;
+					window.location.reload();
+				},{type: 'error',confirmButtonText: '知道了'});
+			}
+			else {
+				alert("重命名失败","文件夹已存在",function () {
+					// $('updateFolderName').remove();
+					window.location.href = window.location.href;
+					window.location.reload();
+				},{type: 'error',confirmButtonText: '知道了'});
+			}
+		})
+	}
+};
+
+//重命名文件
+function updateFileName() {
+
+	let name = $('.flag td a').html();
+	let html = $('.flag td').eq(1).html($('' +
+			"<input id='updateFileName' name='fileFolderName' autocomplete='off' type='text' onblur='checkUpdateFile()' value='"+name+"'>" +
+			''));
+};
+
+function checkUpdateFile() {
+	var name = $.trim($("#updateFileName").val());
+	var nameReg = /^[^\u4E00-\u9FA5\uF900-\uFA2D\w-_]{2,20}$/;
+	// if (!nameReg.test(name)) {
+	// 	alert("文件格式错误！【汉字、字母、数字】");
+	// 	var location = window.location.href;
+	// 	window.location.href = location;
+	// }else{
+		let id = $('.flag td  #fid').html();
+		console.log(id);
+		var newFileName = $('#updateFileName').val();
+		var newFile = {"myFileName" : newFileName, "myFileId" :id};
+		axios.post('/cloud/updateFileName',newFile).then(function (response) {
+			if (response.data.code === 0){
+				alert("","重命名成功",function () {
+					// $('updateFolderName').remove();
+					window.location.href = window.location.href;
+					window.location.reload();
+				},{type: 'error',confirmButtonText: '知道了'});
+			}
+			else {
+				alert("重命名失败","文件已存在",function () {
+					// $('updateFolderName').remove();
+					window.location.href = window.location.href;
+					window.location.reload();
+				},{type: 'error',confirmButtonText: '知道了'});
+			}
+		})
+	// }
+}
+
+</script>
 <script>
 	$(".files").contextMenu({
 		width: 100, // width
@@ -315,32 +422,7 @@
 					});
 				}
 			},
-			{
-				text: " 重命名",
-				callback: function() {
-					let id = $('.flag td span').html();
-					let name = $('.flag td a').html();
-					let html = $('.flag td').eq(1).html($('' +
-							"<form id='updateFileNameForm' action='updateFileName' method='post'>" +
-							"<input id='updateFileName' name='myFileName' autocomplete='off' type='text' onblur='checkUpdateFile()' value='"+name+"'>" +
-							"<input type='hidden' name='myFileId' value='"+id+"'>" +
-							"</form>" +
-							''));
-				}
-			},
-			{
-				text: " 删除",
-				callback: function() {
-					let id = $('#tarFile').html();
-					var location = window.location.href;
-					let strings = location.split("moti-cloud");
-					if (id != ""){
-						window.location.href = strings[0]+"moti-cloud/deleteFile?fId="+id+"&folder="+$('#nowF').html();
-					}else{
-						return;
-					}
-				}
-			},
+
 
 
 
@@ -359,25 +441,6 @@
 		},
 		menu: [
 			{
-				text: " 重命名",
-				callback: function() {
-					let id = $('.flag td span').html();
-					let name = $('.flag td a').html();
-					let html = $('.flag td').eq(1).html($('' +
-							"<form id='updateFolderForm' action='updateFolder' method='post'>" +
-							"<input id='updateFolderName' name='fileFolderName' autocomplete='off' type='text' onblur='checkUpdateFolder()' value='"+name+"'>" +
-							"<input type='hidden' name='fileFolderId' value='"+id+"'>" +
-							"</form>" +
-							''));
-				}
-			},
-			{
-				text: " 新建文件夹",
-				callback: function() {
-					addFolderElement();
-				}
-			},
-			{
 				text: " 清空并删除",
 				callback: function() {
 					let id = $('#tarFolder').html();
@@ -393,48 +456,6 @@
 		]
 
 	});
-	$(".empty-space").contextMenu({
-		width: 100, // width
-		itemHeight: 30, // 菜单项height
-		bgColor: "#fff", // 背景颜色
-		color: "#333", // 字体颜色
-		fontSize: 12, // 字体大小
-		hoverBgColor: "#3498db", // hover背景颜色
-		target: function(ele) { // 当前元素
-			console.log(ele);
-		},
-		menu: [
-			{
-				text: " 新建文件夹",
-				callback: function() {
-					addFolderElement();
-				}
-			},
-		]
-
-	});
-	function checkUpdateFolder() {
-		var name = $.trim($("#updateFolderName").val());
-		var nameReg = /^[\u4E00-\u9FA5A-Za-z0-9]{2,20}$/;
-		if (!nameReg.test(name)) {
-			alert("文件夹格式错误！【汉字、字母、数字】");
-			var location = window.location.href;
-			window.location.href = location;
-		}else{
-			$('#updateFolderForm').submit();
-		}
-	}
-	function checkUpdateFile() {
-		var name = $.trim($("#updateFileName").val());
-		var nameReg = /^[^\u4E00-\u9FA5\uF900-\uFA2D\w-_]{2,20}$/;
-		if (!nameReg.test(name)) {
-			alert("文件夹格式错误！【汉字、字母、数字】");
-			var location = window.location.href;
-			window.location.href = location;
-		}else{
-			$('#updateFileNameForm').submit();
-		}
-	}
 </script>
 <script src="static/u-admin/dist/modules/jquery.min.js"></script>
 <script src="static/u-admin/dist/modules/popper.js"></script>

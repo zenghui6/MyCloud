@@ -1,6 +1,7 @@
 package com.zenghui.wangpan.util;
 
 import java.io.*;
+import java.net.SocketException;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -273,6 +274,40 @@ public class FtpUtils {
                 }
             }
         }
+    }
+
+    public  boolean reNameFile(String oldAllName,String newAllName){
+        FTPClient ftp=new FTPClient();
+        boolean flag =false;
+        try {
+            ftp.connect(host,port);
+            ftp.login(username, password);
+            //设置编码格式
+            ftp.setControlEncoding("UTF-8");
+            ftp.enterLocalPassiveMode();
+            //获取状态码，判断是否连接成功
+            if(!FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
+                throw new RuntimeException("FTP服务器拒绝连接");
+            }
+
+            ftp.enterLocalPassiveMode();
+            ftp.rename(oldAllName,newAllName);
+            flag = true;
+            ftp.logout();
+        } catch (SocketException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            if (ftp.isConnected()){
+                try {
+                    ftp.disconnect();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return flag;
     }
 
     /**

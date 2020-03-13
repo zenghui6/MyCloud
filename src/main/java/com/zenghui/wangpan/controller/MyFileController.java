@@ -9,10 +9,7 @@ import com.zenghui.wangpan.util.LogUtils;
 import com.zenghui.wangpan.util.Result;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.http.HttpRequest;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import org.slf4j.Logger;
 import org.springframework.web.multipart.MultipartFile;
@@ -82,7 +79,6 @@ public class MyFileController extends BaseController {
         }
 
         //判断名称是否符合规范
-        System.out.println(checkTarget(name));
         if (checkTarget(name)){
             logger.error("上传文件失败!文件名不符合规范....");
             return Result.fail(502,"上传失败!文件名不符合规范");
@@ -228,6 +224,67 @@ public class MyFileController extends BaseController {
         logger.info("文件下载失败: "+myFile.getMyFileName()+myFile.getPostfix());
     }
 
+    /**
+     *修改文件名
+     * @param file
+     * @param session
+     * @return
+     */
+    @PostMapping("/updateFileName")
+    public Object updateFileName(@RequestBody MyFile file,HttpSession session){
+        User loginUser = (User) session.getAttribute("loginUser");
+
+        MyFile myFile = myFileService.getFileByFileId(file.getMyFileId());
+        if (myFile != null){
+            String oldName = myFile.getMyFileName();
+            String newName = file.getMyFileName();
+
+            //检查文件名的合法性
+            if (checkTarget(newName)){
+                logger.error("文件名更新失败!文件名不符合规范....");
+                return Result.fail(502,"文件名更新失败!文件名不符合规范....");
+            }
+            int folderId = (Integer) session.getAttribute("foid");
+            //获取当前目录下的所有文件，用来判断是否已经存在
+            List<MyFile> myFiles = null;
+            if (folderId == 0){
+                //当前目录为根目录
+                myFiles = myFileService.listRootFileByStoreId(loginUser.getFileStoreId());
+            }else {
+                //当前目录为其他目录
+                myFiles = myFileService.listFileByFolderId(folderId);
+            }
+            for (int i = 0; i < myFiles.size(); i++) {
+                if ((myFiles.get(i).getMyFileName()+myFiles.get(i).getPostfix()).equals(file.getMyFileName()+file.getPostfix())){
+                    logger.error("当前文件名更新失败...");
+                    return Result.fail("文件名已存在!");
+                }
+            }
+            if (!oldName.equals(newName)){
+                FtpUtils ftpUtils = new FtpUtils();
+                boolean b = ftpUtils.reNameFile(myFile.getMyFilePath() + "/" +oldName+myFile.getPostfix(),myFile.getMyFilePath() + "/" + newName+myFile.getPostfix());
+
+                if (b){
+                    myFile.setMyFileName(newName);
+                    boolean ret = myFileService.updateFile(myFile);
+                    if (ret){
+                        logger.info("修改文件名成功!原文件名: "+oldName+"新文件名: "+newName);
+                    }else {
+                        logger.error("修改文件名失败!原文件名: "+oldName+"新文件名: "+newName);
+                    }
+
+                }
+            }
+        }
+        return Result.fail("修改文件名失败");
+    }
+
+    /**
+     * 根据文件种类返回所有该文件
+     * @param type
+     * @param session
+     * @return
+     */
     @GetMapping("/getFilesByType")
     public Object getFilesByType(@RequestParam("type") int type,HttpSession session){
         User loginUser  = (User) session.getAttribute("loginUser");

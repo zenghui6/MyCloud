@@ -51,6 +51,7 @@
 								<th>大小</th>
 								<th>下载次数</th>
 								<th>上传时间</th>
+								<th style="text-align: center">更多操作</th>
 							</tr>
 							<tr v-for="f in files" class="files-items files">
 								<td><span style="display: none" ></span>
@@ -64,7 +65,7 @@
 								<td style="font-weight: 300">{{f.postfix}}</td>
 
 								<template v-if="f.size >= 1024 ">
-									<td style="font-weight: 300">{{f.size/1024 +'MB'}}</td>
+									<td style="font-weight: 300">{{f.size/1024 | numFilter }}MB</td>
 								</template>
 
 								<template v-if="f.size < 1024 ">
@@ -73,6 +74,11 @@
 
 								<td style="font-weight: 300">{{f.downloadTime}}次</td>
 								<td style="font-weight: 300">{{f.uploadTime}}</td>
+								<td>
+									<a class="btn btn-default" href="#" role="button">重命名</a>
+									<a class="btn btn-default" href="#" role="button">删除</a>
+									<a class="btn btn-default" href="#" role="button">分享</a>
+								</td>
 							</tr>
 						</table>
 					</div>
@@ -156,6 +162,18 @@
 				axios.get("/cloud/getFilesByType?type=3").then(function (response) {
 					vm.files = response.data.data;
 				})
+			}
+		},
+		filters: {
+			numFilter(value) {
+				let realVal = ''
+				if (!isNaN(value) && value !== '') {
+					// 截取当前数据到小数点后两位
+					realVal = parseFloat(value).toFixed(2)
+				} else {
+					realVal = '--'
+				}
+				return realVal
 			}
 		}
 	})

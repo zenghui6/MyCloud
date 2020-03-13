@@ -25,6 +25,8 @@ public interface FileFolderService {
      */
     List<FileFolder> getRootFolderByFileStoreId(Integer fileStoreId);
 
+    boolean updateFileFolderById(FileFolder fileFolder);
+
     /**
      *  获取父目录下的所有文件夹
      * @param parentFolderId

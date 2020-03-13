@@ -36,6 +36,14 @@ public class FileFolderServiceImpl extends BaseService implements FileFolderServ
         return fileFolderMapper.getRootFoldersByFileStoreId(fileStoreId);
     }
 
+    @Override
+    public boolean updateFileFolderById(FileFolder fileFolder) {
+        if (fileFolderMapper.updateByPrimaryKey(fileFolder) != 0){
+            return true;
+        }
+        return false;
+    }
+
     /**
      * 获取父目录下的所有文件夹
      *

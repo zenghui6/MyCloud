@@ -132,6 +132,44 @@ public class FileStoreController extends BaseController {
     }
 
     /**
+     * 重命名文件夹
+     * @param folder
+     * @param session
+     * @return
+     */
+    @PostMapping("/updateFolder")
+    public Object updateFolder(@RequestBody FileFolder folder,HttpSession session) {
+        User loginUser = (User) session.getAttribute("loginUser");
+
+        FileFolder fileFolder = fileFolderService.getById(folder.getFileFolderId());
+        fileFolder.setFileFolderName(folder.getFileFolderName());
+
+        //判断是否重名
+        List<FileFolder> fileFolders = null;
+
+        if (fileFolder.getParentFolderId() == 0) {
+            //没有父文件夹,就在根目录咯,在仓库根目录下所有文件夹
+            fileFolders = fileFolderService.getRootFolderByFileStoreId(loginUser.getFileStoreId());
+        } else {
+            //有父文件夹,在父文件夹下添加文件夹,先获取其下所有文件夹,判断是否存在了
+            fileFolders = fileFolderService.getFileFolderByParentFolderId(folder.getParentFolderId());
+        }
+        for (int i = 0; i < fileFolders.size(); i++) {
+            FileFolder folder1 = fileFolders.get(i);
+            if (folder1.getFileFolderName().equals(folder.getFileFolderName()) && !folder1.getFileFolderId().equals(folder.getFileFolderId()) ) {
+                logger.info("重命名文件夹失败!文件夹已存在...");
+                return Result.fail("重名,文件夹已存在");
+            }
+        }
+            //向数据库写入数据
+            fileFolderService.updateFileFolderById(fileFolder);
+            logger.info("重命名文件夹成功!" + folder);
+            return Result.succuess("文件夹重名成功");
+    }
+
+
+
+    /**
      * 获取当前用户仓库的状态,文件数,文件夹数...
      * 1:文本类型   2:图像类型  3:视频类型  4:音乐类型  5:其他类型
      * @param session
